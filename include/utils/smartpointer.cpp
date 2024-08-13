@@ -1,5 +1,3 @@
-#include <utility>
-
 #include "smartpointer.hpp"
 #include "exception.hpp"
 
@@ -13,7 +11,7 @@ smt_ptr<T>::smt_ptr(const size_t& _allocation_size, void* _allocation_addrs)
 
 template <typename T>
 smt_ptr<T>::smt_ptr(smt_ptr<T>&& _other_ptr) noexcept
-  : _ptr(std::move(_other_ptr._ptr), _ptr_size(std::move(_other_ptr._ptr_size))){
+  : _ptr(_other_ptr._ptr), _ptr_size(_other_ptr._ptr_size){
   _other_ptr._ptr = nullptr;
   _other_ptr._ptr_size = 0;
 };
@@ -21,8 +19,11 @@ smt_ptr<T>::smt_ptr(smt_ptr<T>&& _other_ptr) noexcept
 template <typename T>
 smt_ptr<T>& smt_ptr<T>::operator=(smt_ptr<T>&& _other_ptr) noexcept{
   if(this != &_other_ptr){
+    free();
+    
     _ptr = _other_ptr._ptr;
     _ptr_size = _other_ptr._ptr_size;
+    
     _other_ptr._ptr = nullptr;
     _other_ptr._ptr_size = 0;
   }
@@ -35,6 +36,8 @@ int smt_ptr<T>::free() noexcept{
     if(munmap(_ptr, _ptr_size) == -1){
       return -1;
     }
+    _ptr = nullptr;
+    _ptr_size = 0;
   }
   return 1;
 }
@@ -54,9 +57,4 @@ T* smt_ptr<T>::operator->() const noexcept{
   }
   return _ptr;
 }
-
-
-
-
-
 
