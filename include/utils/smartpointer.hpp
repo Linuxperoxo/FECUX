@@ -1,3 +1,9 @@
+//==========================================|
+//   FILE: smartpointer.hpp                 |
+//   AUTHOR: Linuxperoxo                    |
+//   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
+//==========================================/
+
 #ifndef SMARTPOINTER_HPP
 #define SMARTPOINTER_HPP
 
@@ -15,7 +21,7 @@ public:
   explicit smt_ptr(const size_t& _alloc_size = sizeof(T)) 
     : _ptr(static_cast<T*>(malloc(_alloc_size))), _ptr_size(_alloc_size){
     if(_ptr == nullptr){
-      throw caroexception("Error when trying to allocate memory", MEMORY_ALLOCATION_ERROR_CODE);
+      throw caroexception(MEMORY_ALLOCATION_ERROR_CODE);
     }
   }
 
@@ -51,14 +57,14 @@ public:
 
   T* operator->() const{
     if(_ptr == nullptr){
-      throw caroexception("Attempt to access a member of a null pointer");
+      throw caroexception(ATTEMPT_MEMBER_NULLPTR);
     }
     return _ptr;
   }
 
   T& operator*() const{
     if(_ptr == nullptr){
-      throw caroexception("Attempt to dereference a null pointer", ATTEMPT_DEREFERENCE_NULLPTR);   
+      throw caroexception(ATTEMPT_DEREFERENCE_NULLPTR);   
     }
     return *_ptr;
   }
