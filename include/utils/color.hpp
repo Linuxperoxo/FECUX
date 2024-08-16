@@ -1,11 +1,11 @@
 //==========================================|
-//   FILE: color.h                          |
+//   FILE: color.hpp                        |
 //   AUTHOR: Linuxperoxo                    |
 //   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
 //==========================================/
 
-#ifndef COLOR_H
-#define COLOR_H
+#ifndef COLOR_HPP
+#define COLOR_HPP
 
 #define RED "\033[031m"
 #define GREEN "\033[032m"

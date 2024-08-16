@@ -7,53 +7,58 @@
 #ifndef SMARTPOINTER_HPP
 #define SMARTPOINTER_HPP
 
-#include <cstddef>
 #include <cstdlib>
+#include <new>
 
-#include "exception.hpp"
+#include "caroexception.hpp"
 
 template <typename T>
 class smt_ptr{
 private:
   T* _ptr;
-  size_t _ptr_size;
 public:
-  explicit smt_ptr(const size_t& _alloc_size = sizeof(T)) 
-    : _ptr(static_cast<T*>(malloc(_alloc_size))), _ptr_size(_alloc_size){
+  smt_ptr() 
+    : _ptr(new (std::nothrow) T){
     if(_ptr == nullptr){
-      throw caroexception(MEMORY_ALLOCATION_ERROR_CODE);
-    }
+      throw caroexception(MEMORY_ALLOCATION_ERROR);
+    } 
   }
 
   smt_ptr(smt_ptr&& _other_ptr) noexcept 
-    : _ptr(_other_ptr._ptr), _ptr_size(_other_ptr._ptr_size){
-    _other_ptr = nullptr;
-    _ptr_size = 0;
+    : _ptr(_other_ptr._ptr){
+    _other_ptr._ptr = nullptr;
   }
 
   ~smt_ptr(){
-    free();
+    relax();
   }
 
-  int free() noexcept{
+  void relax() noexcept{
     if(_ptr != nullptr){
-      free(_ptr);
+      delete _ptr;
       _ptr = nullptr;
     }
-    return 1;
   }
 
-  smt_ptr& operator=(smt_ptr&& _other_ptr){
-    if(this != &_other_ptr){
-      free();
+  int store(const T& _value) noexcept{
+    if(_ptr != nullptr){
+      _ptr->~T();
+      _ptr = new (std::nothrow) T;
 
-      _ptr = _other_ptr._ptr;
-      _ptr_size = _other_ptr._ptr_size;
+      if(_ptr == nullptr){
+        return -1;
+      }
+      return 1;
+    }  
+    return -1;
+  }
 
-      _other_ptr._ptr = nullptr;
-      _other_ptr._ptr_size = 0;
+  T& operator*() const{
+    if(_ptr == nullptr){
+      throw caroexception(ATTEMPT_DEREFERENCE_NULLPTR);
     }
-  }
+    return *_ptr;
+  } 
 
   T* operator->() const{
     if(_ptr == nullptr){
@@ -62,15 +67,8 @@ public:
     return _ptr;
   }
 
-  T& operator*() const{
-    if(_ptr == nullptr){
-      throw caroexception(ATTEMPT_DEREFERENCE_NULLPTR);   
-    }
-    return *_ptr;
-  }
-
-  smt_ptr(const smt_ptr&) = delete;
   smt_ptr& operator=(const smt_ptr&) = delete;
+  smt_ptr(const smt_ptr&) = delete;
 };
 
 #endif
