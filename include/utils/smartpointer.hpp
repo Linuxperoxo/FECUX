@@ -17,11 +17,14 @@ class smt_ptr{
 private:
   T* _ptr;
 public:
-  smt_ptr() 
-    : _ptr(new (std::nothrow) T){
-    if(_ptr == nullptr){
-      throw caroexception(MEMORY_ALLOCATION_ERROR);
-    } 
+  explicit smt_ptr(T* _new_ptr = nullptr)
+    : _ptr(_new_ptr){
+    if(_new_ptr == nullptr){
+      _ptr = new(std::nothrow) T;
+      if(_ptr == nullptr){
+        throw caroexception(MEMORY_ALLOCATION_ERROR);
+      }
+    }
   }
 
   smt_ptr(smt_ptr&& _other_ptr) noexcept 
@@ -40,17 +43,13 @@ public:
     }
   }
 
-  int store(const T& _value) noexcept{
-    if(_ptr != nullptr){
-      _ptr->~T();
-      _ptr = new (std::nothrow) T;
-
-      if(_ptr == nullptr){
-        return -1;
-      }
-      return 1;
-    }  
-    return -1;
+  smt_ptr& operator=(smt_ptr&& _other_ptr) noexcept{
+    if(this != &_other_ptr){
+      relax();
+      _ptr = _other_ptr._ptr;
+      _other_ptr._ptr = nullptr;
+    }
+    return *this;
   }
 
   T& operator*() const{
