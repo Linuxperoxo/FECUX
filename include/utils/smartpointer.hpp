@@ -7,8 +7,8 @@
 #ifndef SMARTPOINTER_HPP
 #define SMARTPOINTER_HPP
 
+#include <cstddef>
 #include <cstdlib>
-#include <new>
 
 #include "caroexception.hpp"
 
@@ -16,20 +16,27 @@ template <typename T>
 class smt_ptr{
 private:
   T* _ptr;
+  size_t _ptr_size;
 public:
-  explicit smt_ptr(T* _new_ptr = nullptr)
-    : _ptr(_new_ptr){
-    if(_new_ptr == nullptr){
-      _ptr = new(std::nothrow) T;
-      if(_ptr == nullptr){
-        throw caroexception(MEMORY_ALLOCATION_ERROR);
-      }
+  explicit smt_ptr(const size_t& _alloc_size = sizeof(T))
+    : _ptr(nullptr), _ptr_size(_alloc_size){
+    if(_alloc_size < sizeof(T)){
+      throw caroexception(ALLOCATION_SIZE_TOO_SMALL);
     }
+    
+    _ptr = static_cast<T*>(malloc(_alloc_size));
+
+    if(_ptr == nullptr){
+      throw caroexception(MEMORY_ALLOCATION_ERROR);
+    }
+
+    new(_ptr) T();
   }
 
   smt_ptr(smt_ptr&& _other_ptr) noexcept 
-    : _ptr(_other_ptr._ptr){
+    : _ptr(_other_ptr._ptr), _ptr_size(_other_ptr._ptr_size){
     _other_ptr._ptr = nullptr;
+    _other_ptr._ptr_size = 0;
   }
 
   ~smt_ptr(){
@@ -38,7 +45,8 @@ public:
 
   void relax() noexcept{
     if(_ptr != nullptr){
-      delete _ptr;
+      _ptr->~T();
+      std::free(_ptr);
       _ptr = nullptr;
     }
   }
@@ -47,7 +55,9 @@ public:
     if(this != &_other_ptr){
       relax();
       _ptr = _other_ptr._ptr;
+      _ptr = _other_ptr._ptr_size;
       _other_ptr._ptr = nullptr;
+      _other_ptr._ptr_size = 0;
     }
     return *this;
   }

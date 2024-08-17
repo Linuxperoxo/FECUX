@@ -23,20 +23,30 @@ caroexception::caroexception(const int& _error_code, const std::string _what, co
         _excep_file = (_file == "none" ? CONFIG_FILE_LOC : _file);
         break;
       case FILE_NOT_FOUND:
-        _excep_what = "Specified file was not found in the file system";
+        _excep_what = "Specified file" GREEN " was not found" NC " in the file system";
         break;
       case ATTEMPT_DEREFERENCE_NULLPTR:
-        _excep_what = "Attempt to dereference a null pointer";
+        _excep_what = "Attempt to dereference a" GREEN " null pointer" NC;
         break;
       case ATTEMPT_MEMBER_NULLPTR:
-        _excep_what = "Attempt to access a member of null pointer";
+        _excep_what = "Attempt to access a member of" GREEN " null pointer" NC;
+        break;
+      case ALLOCATION_SIZE_TOO_SMALL:
+        _excep_what = "Allocation size" GREEN " too small" NC;
+        break;
+      case REPO_DIR_NOT_FOUND:
+        _excep_what = "the repository directory" GREEN " does not exist." NC " Use" GREEN " caro --sync" NC;
+        _excep_file = (_file == "none" ? REPO_DIR : _file);
+        break;
+      case FAILED_TO_CREATE_DIR:
+        _excep_what = "An error occurred when trying to create a directory";
         break;
     }
   }  
 }
 
 void caroexception::getAll() const noexcept{
-  std::cerr << RED "ERROR_INFOS" NC " {\n";
+  std::cerr << "ERROR_INFOS = {\n";
   std::cerr << RED "  _excep_what: " NC << _excep_what << '\n';
   std::cerr << RED "  _excep_error_code: " NC << _excep_error_code << '\n';
   std::cerr << RED "  _excep_file: " NC << _excep_file << '\n';
