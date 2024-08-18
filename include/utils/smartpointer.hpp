@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <utility>
 
 #include "caroexception.hpp"
 
@@ -18,7 +19,8 @@ private:
   T* _ptr;
   size_t _ptr_size;
 public:
-  explicit smt_ptr(const size_t& _alloc_size = sizeof(T))
+  template <typename... Args>
+  explicit smt_ptr(const size_t& _alloc_size = sizeof(T), Args&&... args)
     : _ptr(nullptr), _ptr_size(_alloc_size){
     if(_alloc_size < sizeof(T)){
       throw caroexception(ALLOCATION_SIZE_TOO_SMALL);
@@ -30,7 +32,7 @@ public:
       throw caroexception(MEMORY_ALLOCATION_ERROR);
     }
 
-    new(_ptr) T();
+    new(_ptr) T(std::forward<Args>(args)...);
   }
 
   smt_ptr(smt_ptr&& _other_ptr) noexcept 

@@ -1,3 +1,9 @@
+//==========================================|
+//   FILE: caroline.cpp                     |
+//   AUTHOR: Linuxperoxo                    |
+//   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
+//==========================================/
+
 #include <cstdlib>
 #include <vector>
 #include <thread>
