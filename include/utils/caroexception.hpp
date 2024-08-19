@@ -1,31 +1,34 @@
+//==========================================|
+//   FILE: caroexception.hpp                |
+//   AUTHOR: Linuxperoxo                    |
+//   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
+//==========================================/
+
 #ifndef CAROEXCEPTION_HPP
 #define CAROEXCEPTION_HPP
 
-#define MEMORY_ALLOCATION_ERROR 10
-#define CONFIGURATION_VAR_EMPTY 11
-#define FILE_NOT_FOUND 12
-#define ATTEMPT_DEREFERENCE_NULLPTR 13
-#define ATTEMPT_MEMBER_NULLPTR 14
-#define ALLOCATION_SIZE_TOO_SMALL 15 
-#define REPO_DIR_NOT_FOUND 16
-#define FAILED_TO_CREATE_DIR 17
-
 #include <exception>
-#include <string>
 
-class caroexception : public std::exception{
-private:
-  std::string _excep_what;
-  std::string _excep_file;
-  int _excep_error_code;
-public:
-  caroexception(const int& _error_code, const std::string _what = "none", const std::string _file = "none") noexcept;
+namespace caroline{
+  #define MEMORY_ALLOCATION_ERROR 10
+  #define ATTEMPT_DEREFERENCE_NULLPTR 13
+  #define ATTEMPT_MEMBER_NULLPTR 14
+  #define CONFIG_FILE_NOT_FOUND 15
+  #define CONFIGURATION_VAR_FAILED 16
 
-  void getAll() const noexcept;
+  class caroexception : public std::exception{
+  private:
+    char* _exception_what;
+    char* _exception_file;
+    int _exception_error_code;
+  public:
+    explicit caroexception(const int& _error_code, const char _what[] = "none", const char _file_OR_dir[] = "none") noexcept;
 
-  const char* what() const noexcept;
-  const char* getFile() const noexcept;
-  const int getErrorCode() const noexcept;
-};
+    void getAll() const noexcept;
 
+    const char* what() const noexcept override;
+    const char* getFile() const noexcept;
+    const int getErrorCode() const noexcept;
+  };
+}
 #endif

@@ -1,66 +1,92 @@
-//==========================================|
-//   FILE: caroexception.cpp                |
-//   AUTHOR: Linuxperoxo                    |
-//   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
-//==========================================/
-
+#include <cstddef>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 
-#include "../include/caroline/const_var.hpp"
 #include "../include/utils/caroexception.hpp"
+#include "../include/caroline/const.hpp"
 #include "../include/utils/color.hpp"
 
-caroexception::caroexception(const int& _error_code, const std::string _what, const std::string _file) noexcept
-  : _excep_what(_what), _excep_file(_file), _excep_error_code(_error_code){
-  if(_what == "none"){
+#define MAX_SIZE 256
+
+caroline::caroexception::caroexception(const int& _error_code, const char _what[], const char _file_OR_dir[]) noexcept
+  : _exception_what(nullptr), _exception_file(nullptr), _exception_error_code(_error_code){
+  
+  size_t length_what = std::strlen(_what) + 1;
+  size_t length_file_OR_dir = std::strlen(_file_OR_dir) + 1;
+
+  if(std::strcmp(_what, "none") == 0){
+    length_what = MAX_SIZE;
+  }
+
+  if(std::strcmp(_file_OR_dir, "none") == 0){
+    length_file_OR_dir = MAX_SIZE;
+  }
+
+
+  _exception_what = static_cast<char*>(malloc(length_what));
+  _exception_file = static_cast<char*>(malloc(length_file_OR_dir));
+  
+  if(_exception_what == nullptr || _exception_file == nullptr){
+    std::free(_exception_what);
+    _exception_what = nullptr;
+
+    std::free(_exception_file);
+    _exception_file = nullptr;
+
+    std::cerr << RED "CRITICAL ERROR: " NC "Memory allocation failed for exception class!!!\n";
+    return;
+  }
+  
+  std::strcpy(_exception_what, _what);
+  std::strcpy(_exception_file, _file_OR_dir);
+  
+  if(std::strcmp(_exception_what, "none") == 0){
     switch(_error_code){
       case MEMORY_ALLOCATION_ERROR:
-        _excep_what = "Error when trying to allocate memory";
-        break;
-      case CONFIGURATION_VAR_EMPTY:
-        _excep_what = "Configuration variable is empty. Check config file!";
-        _excep_file = (_file == "none" ? CONFIG_FILE_LOC : _file);
-        break;
-      case FILE_NOT_FOUND:
-        _excep_what = "Specified file" GREEN " was not found" NC " in the file system";
+        std::strcpy(_exception_what, "caroexception: Error when trying to allocate memory");
         break;
       case ATTEMPT_DEREFERENCE_NULLPTR:
-        _excep_what = "Attempt to dereference a" GREEN " null pointer" NC;
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "Attempt to dereference a" GREEN " null pointer" NC);
         break;
       case ATTEMPT_MEMBER_NULLPTR:
-        _excep_what = "Attempt to access a member of" GREEN " null pointer" NC;
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "Attempt to access a member of" GREEN " null pointer" NC);
         break;
-      case ALLOCATION_SIZE_TOO_SMALL:
-        _excep_what = "Allocation size" GREEN " too small" NC;
+      case CONFIG_FILE_NOT_FOUND:
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "Configuration file not found");
+        std::strcpy(_exception_file, CONFIG_FILE);
         break;
-      case REPO_DIR_NOT_FOUND:
-        _excep_what = "the repository directory" GREEN " does not exist." NC " Use" GREEN " caro --sync" NC;
-        _excep_file = (_file == "none" ? REPO_DIR : _file);
+      case CONFIGURATION_VAR_FAILED:
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "Unable to load variable in configuration file");
+        if(std::strcmp(_exception_file, "none") == 0){
+          std::strcpy(_exception_file, CONFIG_FILE);
+        } else {
+          std::strcpy(_exception_file, _file_OR_dir);
+        }
         break;
-      case FAILED_TO_CREATE_DIR:
-        _excep_what = "An error occurred when trying to create a directory";
+      default:
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "An unknown error occurred");
         break;
     }
-  }  
+  }
 }
 
-void caroexception::getAll() const noexcept{
-  std::cerr << "ERROR_INFOS = {\n";
-  std::cerr << RED "  _excep_what: " NC << _excep_what << '\n';
-  std::cerr << RED "  _excep_error_code: " NC << _excep_error_code << '\n';
-  std::cerr << RED "  _excep_file: " NC << _excep_file << '\n';
+void caroline::caroexception::getAll() const noexcept{
+  std::cerr << "ERROR = {\n";
+  std::cerr << "  WHAT: " << _exception_what << '\n';
+  std::cerr << "  FILE: " << _exception_file << '\n';
+  std::cerr << "  CODE: " << _exception_error_code << '\n';
   std::cerr << "}\n";
 }
 
-const char* caroexception::what() const noexcept{
-  return _excep_what.c_str();
+const char* caroline::caroexception::what() const noexcept{
+  return _exception_what;
 }
 
-const char* caroexception::getFile() const noexcept{
-  return _excep_file.c_str();
+const char* caroline::caroexception::getFile() const noexcept{
+  return _exception_file;
 }
 
-const int caroexception::getErrorCode() const noexcept{
-  return _excep_error_code;
-} 
+const int caroline::caroexception::getErrorCode() const noexcept{
+  return _exception_error_code;
+}

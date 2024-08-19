@@ -100,7 +100,7 @@ public:
    *
    * @return Referência ao objeto gerenciado.
    */
-  T& operator*() const noexcept {
+  T& operator*() const{
     if (_ptr == nullptr) {
       throw caroline::caroexception(ATTEMPT_DEREFERENCE_NULLPTR);
     }
@@ -113,7 +113,7 @@ public:
    *
    * @return Ponteiro para o objeto gerenciado.
    */
-  T* operator->() const noexcept {
+  T* operator->() const{
     if (_ptr == nullptr) {
       throw caroline::caroexception(ATTEMPT_MEMBER_NULLPTR);
     }
