@@ -20,7 +20,7 @@ struct options{
 
   static bool configured;
 
-  explicit options();
+  explicit options() noexcept;
   ~options() noexcept;
 };
 
@@ -28,7 +28,7 @@ class configuration{
 private:
   const smt_ptr<options> option;
 public:
-  explicit configuration() : option(){ /** */ };
+  explicit configuration() noexcept : option(){ /** */ };
   ~configuration() noexcept = default;
 
   const char* getSource_dir() const noexcept;
