@@ -9,6 +9,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <new>
 
 #include "../caroline/caroexception.hpp"
 
@@ -40,14 +41,23 @@ public:
     // `malloc` retorna um ponteiro void*, que é convertido para T*.
     _ptr = static_cast<T*>(malloc(_alloc_size));
 
-    if (_ptr == nullptr) {
+    if(_ptr == nullptr){
       // Lança uma exceção personalizada se a alocação falhar
       throw caroline::caroexception(MEMORY_ALLOCATION_ERROR);
     }
 
     // Constrói um objeto do tipo T na memória alocada.
     // O operador new com sintaxe de "placement" constrói o objeto diretamente na memória alocada.
-    new(_ptr) T(std::forward<Args>(args)...);
+    
+    try{
+      new(_ptr) T(std::forward<Args>(args)...);
+    }
+    
+    catch(...){
+      std::free(_ptr);
+      _ptr = nullptr;
+      throw caroline::caroexception(MEMORY_ALLOCATION_ERROR);
+    }
   }
 
   /**
@@ -81,6 +91,10 @@ public:
       _other_ptr._ptr_size = 0;  // Define o tamanho em `_other_ptr` como 0
     }
     return *this;
+  }
+
+  T* getPtr() const noexcept{
+    return _ptr;
   }
 
   /**

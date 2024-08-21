@@ -4,10 +4,12 @@
 //   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
 //==========================================/
 
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <libconfig.h++>
 #include <string>
+#include <thread>
 #include <vector>
 #include <fstream>
 
@@ -18,7 +20,10 @@
 #include "../include/caroline/carolinevars.hpp"
 #include "../include/utils/color.hpp"
 
-//int caroline::integrity::check_all(){}
+void caroline::integrity::check_all(const caroline::configuration* configuration){
+  check_config_file();
+  check_dirs(configuration);
+}
 
 void caroline::integrity::check_config_file(){
   try{
@@ -56,7 +61,18 @@ void caroline::integrity::check_config_file(){
   }
 }
 
-//int caroline::integrity::check_dirs(){}
+void caroline::integrity::check_dirs(const caroline::configuration* configuration){
+  std::vector<const char*> check_dirs = {configuration->getSource_dir(), configuration->getFakeroot_dir(), REPO_DIR, WORLD_DIR};
+  
+  for(size_t i = 0; i < check_dirs.size(); i++){
+    if(!files::is_dir(check_dirs[i])){
+      std::cerr << YELLOW "WARNING: " NC << "Directory " GREEN << check_dirs[i] << NC << " not found!\n";
+      std::cerr << GREEN "::: " NC "Creating directory " GREEN << check_dirs[i] << NC << '\n';
+      files::create_dir(check_dirs[i]);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+  }
+}
 
 int caroline::integrity::genConfigFile(){
   smt_ptr<std::ofstream> newConfigFile(sizeof(std::ofstream), CONFIG_FILE);

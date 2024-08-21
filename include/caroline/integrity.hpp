@@ -7,13 +7,15 @@
 #ifndef INTEGRITY_HPP
 #define INTEGRITY_HPP
 
+#include "config.hpp"
+
 namespace caroline{
 
 class integrity{
 public:
-  //static int check_all();
+  static void check_all(const caroline::configuration* configuration);
   static void check_config_file();
-  //static int check_dirs();
+  static void check_dirs(const caroline::configuration* configuration);
   static int genConfigFile();
 };
 
