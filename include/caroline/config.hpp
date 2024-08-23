@@ -7,8 +7,6 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#include "../tools/smartpointer.hpp"
-
 namespace caroline{
 
 struct options{
@@ -20,22 +18,24 @@ struct options{
 
   static bool configured;
 
-  explicit options() noexcept;
+  explicit options();
+
   ~options() noexcept;
 };
 
 class configuration{
 private:
-  const smt_ptr<options> option;
+  options* _option;
 public:
-  explicit configuration() noexcept : option(){ /** */ };
-  ~configuration() noexcept = default;
+  explicit configuration();
 
-  const char* getSource_dir() const noexcept;
-  const char* getFakeroot_dir() const noexcept;
-  const char* getCflags() const noexcept;
-  const char* getCxxflags() const noexcept;
-  const char* getJobs() const noexcept;
+  ~configuration() noexcept;
+
+  const char* source_dir() const noexcept;
+  const char* fakeroot_dir() const noexcept;
+  const char* cflags() const noexcept;
+  const char* cxxflags() const noexcept;
+  const char* jobs() const noexcept;
 };
 
 }

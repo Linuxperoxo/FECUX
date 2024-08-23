@@ -1,19 +1,22 @@
+#include <algorithm>
+#include <cstdlib>
 #include <iostream>
+#include <new>
 
 #include "../include/caroline/config.hpp"
-#include "../include/caroline/integrity.hpp"
 
-int main(const int argc, const char* argv[]){
-  caroline::integrity::check_config_file();
+int main(int argc, char* argv[]){
+  caroline::configuration* configuration = static_cast<caroline::configuration*>(malloc(sizeof(caroline::configuration)));
   
-  smt_ptr<caroline::configuration> configuration;
+  new (configuration) caroline::configuration();
+  
+  std::cout << configuration->source_dir() << '\n'; 
+  std::cout << configuration->fakeroot_dir() << '\n';
+  std::cout << configuration->cflags() << '\n';
+  std::cout << configuration->cxxflags() << '\n';
+  std::cout << configuration->jobs() << '\n';
+  
+//  std::free(configuration);
 
-  caroline::integrity::check_dirs(configuration.getPtr());
-  
-  std::cout << configuration->getSource_dir() << '\n';
-  std::cout << configuration->getFakeroot_dir() << '\n';
-  std::cout << configuration->getCflags() << '\n';
-  std::cout << configuration->getCxxflags() << '\n';
-  std::cout << configuration->getJobs() << '\n';
   return 0;
 }
