@@ -59,6 +59,9 @@ caroline::caroexception::caroexception(const unsigned int& _error_code, const ch
         if(std::strcmp(_file, "none") == 0){
           std::strcpy(_exception_file, CONFIG_FILE);
         }
+      case REPO_DIR_NOT_EXIST:
+        std::strcpy(_exception_what, "Local repository does not exist in your filesystem use " YELLOW "caro -s" NC);
+        std::strcpy(_exception_file, REPO_DIR);
         break;
     }
   }

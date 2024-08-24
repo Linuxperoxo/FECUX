@@ -14,6 +14,7 @@
 #define ATTEMPT_MEMBER_NULLPTR 14
 #define CONFIG_FILE_NOT_FOUND 15
 #define CONFIGURATION_VAR_FAILED 16
+#define REPO_DIR_NOT_EXIST 17
 
 namespace caroline{
 
