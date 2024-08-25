@@ -10,6 +10,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <fstream>
 
 #include "../include/caroline/integrity.hpp"
 #include "../include/caroline/vars.hpp"
@@ -20,6 +21,9 @@
 void caroline::integrity::check_config(){
   try{
     if(!files::is_file(CONFIG_FILE)){
+      if(genConfigFile() == 1){
+        std::cerr << YELLOW "WARNING: " NC "Configuration file was created in " << GREEN << CONFIG_FILE << NC << ". GO CUSTOMIZE IT! >:)\n";
+      }
       throw caroline::caroex(CONFIG_FILE_NOT_FOUND);
     }
     
@@ -91,4 +95,32 @@ void caroline::integrity::check_dirs(const caroline::configuration& _configurati
     _runtime_error.all();
     exit(_runtime_error.errorCode());
   }
+}
+
+int caroline::integrity::genConfigFile() noexcept{
+  void* _raw_ofstream = malloc(sizeof(std::ofstream));
+
+  if(_raw_ofstream == nullptr){
+    return -1;
+  }
+  
+  std::ofstream* _ofstream = new(_raw_ofstream) (std::ofstream);
+
+  _ofstream->open(CONFIG_FILE);
+
+  if(!_ofstream->is_open()){
+    std::free(_raw_ofstream);
+    return -1;
+  }
+  
+  *_ofstream << "source_dir=\"\"\nfakeroot_dir=\"\"\ncflags=\"\"\ncxxflags=\"\"\njobs=\"\"\n";
+
+  _ofstream->close();
+
+  std::free(_raw_ofstream);
+
+  _raw_ofstream = nullptr;
+  _ofstream = nullptr;
+
+  return 1;
 }

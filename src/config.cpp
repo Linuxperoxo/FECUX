@@ -9,7 +9,6 @@
 #include <libconfig.h++>
 #include <string>
 #include <vector>
-#include <iostream>
 #include <cstring>
 
 #include "../include/caroline/config.hpp"
@@ -28,7 +27,6 @@ bool caroline::options::configured = false;
 caroline::options::options(){
   try{
     if(configured){
-      std::cout << "just configured!\n";
       return;
     }
 

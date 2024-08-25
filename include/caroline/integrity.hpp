@@ -15,6 +15,7 @@ class integrity{
 public:
   static void check_config();
   static void check_dirs(const caroline::configuration& _configuration_buffer);
+  static int genConfigFile() noexcept;
 }; 
 
 }
