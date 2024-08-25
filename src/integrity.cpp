@@ -12,7 +12,6 @@
 #include <chrono>
 
 #include "../include/caroline/integrity.hpp"
-#include "../include/caroline/config.hpp"
 #include "../include/caroline/vars.hpp"
 #include "../include/extra/caroexception.hpp"
 #include "../include/utils/files.hpp"
@@ -69,28 +68,13 @@ void caroline::integrity::check_config(){
   }
 }
 
-void caroline::integrity::check_dirs(){
+void caroline::integrity::check_dirs(const caroline::configuration& _configuration_buffer){
   try{
-    void* _raw_configuration_buffer = malloc(sizeof(caroline::configuration));
-
-    if(_raw_configuration_buffer == nullptr){
-      throw caroline::caroex(MEMORY_ALLOCATION_ERROR);
-    }
-
-    caroline::configuration* _configuration_buffer = new(_raw_configuration_buffer) caroline::configuration();
-
-    std::vector<const char*> _dirs = {_configuration_buffer->source_dir(), _configuration_buffer->fakeroot_dir(), REPO_DIR, WORLD_DIR};
+    std::vector<const char*> _dirs = {_configuration_buffer.source_dir(), _configuration_buffer.fakeroot_dir(), REPO_DIR, WORLD_DIR};
 
     for(const auto& dir : _dirs){
       if(!files::is_dir(dir)){
         if(dir == REPO_DIR){
-          _configuration_buffer->~configuration();
-          
-          std::free(_raw_configuration_buffer);
-          
-          _configuration_buffer = nullptr;
-          _raw_configuration_buffer = nullptr;
-
           throw caroline::caroex(REPO_DIR_NOT_EXIST);  
         }
         std::cerr << YELLOW "WARNING: " NC "Directory " YELLOW << dir << NC " not found!\n";
@@ -101,12 +85,6 @@ void caroline::integrity::check_dirs(){
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
       }
     }
-    _configuration_buffer->~configuration();
-
-    std::free(_raw_configuration_buffer);
-
-    _configuration_buffer = nullptr;
-    _raw_configuration_buffer = nullptr;
   }
 
   catch(caroline::caroex& _runtime_error){
