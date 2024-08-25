@@ -9,11 +9,13 @@
 
 #include <exception>
 
-#define MEMORY_ALLOCATION_ERROR 12
+#define MEMORY_ALLOCATION_ERROR 14
 #define CONFIG_FILE_NOT_FOUND 15
 #define CONFIGURATION_VAR_FAILED 16
 #define REPO_DIR_NOT_EXIST 17
 #define PACKAGE_NOT_FOUND 18
+#define INFO_FILE_NOT_FOUND 19
+#define INFO_VAR_FAILED 20
 
 namespace caroline{
 

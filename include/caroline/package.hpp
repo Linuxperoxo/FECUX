@@ -12,9 +12,14 @@ namespace caroline{
 class package{
 private:
   char* _name;
+  char* _version;
+  char* _source_url;
+  char* _desc;
+
   char* _root;
 
   void mount(const char* _pkg_name);
+  void loadVar();
 public:
   package(const char* _pkg_name) noexcept;
   ~package() noexcept;

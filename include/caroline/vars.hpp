@@ -10,5 +10,6 @@
 constexpr const char* CONFIG_FILE = "/home/tux/CarolinePackageManager/misc/caroline.conf";
 constexpr const char* REPO_DIR = "/var/db/lalapkg/repo";
 constexpr const char* WORLD_DIR = "/var/db/lalapkg/world";
+constexpr const char* INFO_FILE_NAME = "infopkg";
 
 #endif
