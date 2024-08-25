@@ -13,21 +13,17 @@
 
 int main(int argc, char* argv[]){
   void* _raw_configuration = malloc(sizeof(caroline::configuration)); 
-  
-  caroline::configuration* _configuration = new (_raw_configuration) caroline::configuration();
-    
-  caroline::integrity::check_dirs(*_configuration);
-
   void* _raw_package = malloc(sizeof(caroline::package));
 
-  caroline::package* _package = new(_raw_package) caroline::package("neofetch");
+  caroline::configuration* _configuration = new (_raw_configuration) caroline::configuration();
+  caroline::package* _package = new(_raw_package) caroline::package(argv[1]); 
+
+  caroline::integrity::check_dirs(*_configuration);
 
   _package->~package();
+  _configuration->~configuration();
 
   std::free(_raw_package);
-
-  _configuration->~configuration();
-  
   std::free(_raw_configuration);
 
   return 0;
