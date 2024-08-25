@@ -1,0 +1,28 @@
+# Documentação de Configurações
+
+## Configurações Suportadas pelo Caroline
+
+### 1. `source_dir`
+
+ *Descrição: Diretório responsável por armazenar todos os arquivos-fonte baixados. Remover esses arquivos não afeta o sistema, mas, para reinstalar o pacote, será necessário baixar o arquivo-fonte novamente.
+ *Valor Padrão: "/var/lalapkg/source_dir"
+   *Nota: Este diretório pode ser modificado conforme necessário.
+
+### 2. `fakeroot_dir`
+
+ *Descrição: Diretório usado como local de instalação do pacote. Após a compilação, todos os arquivos do pacote serão instalados aqui. Trate este diretório como a raiz ("/") para o pacote em questão.
+ *Valor Padrão: "/"
+   *Nota: Modifique este diretório conforme necessário, especialmente para cross-compiling. Mais informações podem ser encontradas em [Linux From Scratch Toolchain](https://www.linuxfromscratch.org/lfs/view/stable/partintro/toolchaintechnotes.html).
+   *Extra: Se o pacote for instalado em um diretório diferente de `/`, será criado um diretório `world` em `fakeroot_dir/var/db/lalapkg/world`. Caso contrário, será criado em `/var/db/lalapkg/world`.
+
+### 3. `cflags` e `cxxflags`
+
+ *Descrição: Configurações usadas para passar opções ao compilador C e C++. "cflags" aplica-se ao código C, e "cxxflags" ao código C++.
+ *Valor Padrão: "-march=native -O2 -pipe"
+   *Nota: Modifique essas opções apenas se souber o que está fazendo. O valor padrão oferece uma boa otimização. Para uma otimização mais agressiva, você pode usar `-O3`, mas isso pode aumentar o tempo de compilação e o uso de memória.
+
+### 4. `jobs`
+
+ *Descrição: Especifica o número de threads ou tarefas paralelas usadas durante o processo de compilação. Usar múltiplos threads pode acelerar a construção do software.
+ *Valor Padrão: "-j$(nproc)"
+   *Nota: Ajuste o valor conforme necessário. Aumentar demais pode sobrecarregar o sistema e diminuir o desempenho geral. Use um número próximo ao total de núcleos de CPU disponíveis.
