@@ -1,1 +1,0 @@
-arrumar todo o config* para liberar a memoria corretamente xDDDDDD

@@ -58,12 +58,22 @@ caroline::options::options(){
         for(size_t k = 0; k < i; k++){
           std::free(*_ptrs[i]);
         }
-        std::free(_libconfig);
+        _libconfig->~Config();
+        _libconfig = nullptr;
+
+        std::free(_raw_libconfig);
+        _raw_libconfig = nullptr;
+        
         throw caroline::caroex(MEMORY_ALLOCATION_ERROR);
       }
       std::strcpy(*_ptrs[i], _buffer.c_str());
     }
-    std::free(_libconfig);
+    _libconfig->~Config();
+    _libconfig = nullptr;
+
+    std::free(_raw_libconfig);
+    _raw_libconfig = nullptr;
+    
     configured = true;
   }
 
@@ -104,6 +114,7 @@ caroline::configuration::configuration()
 caroline::configuration::~configuration() noexcept{
   _option->~options();
   std::free(_option);
+
   _option = nullptr;
 }
 
