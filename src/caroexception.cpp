@@ -77,12 +77,22 @@ caroline::caroexception::caroexception(const unsigned int& _error_code, const ch
         break;
       
       case INFO_FILE_NOT_FOUND:
-        std::strcpy(_exception_what, YELLOW "caroexception: " NC "Package info file not found, use " YELLOW "caro -s " NC "to synchronize local repository");
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "Package info file not found");
         std::strcpy(_exception_file, _file);
         break;
 
       case INFO_VAR_FAILED:
         std::strcpy(_exception_what, YELLOW "caroexception: " NC "Unable to load variable in infopkg file");
+        std::strcpy(_exception_file, _file);
+        break;
+
+      case BUILD_FILE_NOT_FOUND:
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "Package build file not found");
+        std::strcpy(_exception_file, _file);
+        break;
+
+      case NONE_FUNCTIONS_FOUND:
+        std::strcpy(_exception_what, YELLOW "caroexception: " NC "No function found in the build file");
         std::strcpy(_exception_file, _file);
         break;
     }

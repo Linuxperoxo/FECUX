@@ -16,6 +16,8 @@
 #define PACKAGE_NOT_FOUND 18
 #define INFO_FILE_NOT_FOUND 19
 #define INFO_VAR_FAILED 20
+#define BUILD_FILE_NOT_FOUND 21
+#define NONE_FUNCTIONS_FOUND 22
 
 namespace caroline{
 

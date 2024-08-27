@@ -16,10 +16,13 @@ private:
   char* _pkg_url;
   char* _pkg_desc;
 
+  char** _pkg_functions;
+
   char* _pkg_root;
 
   void mount(const char* _pkg);
   void loadVar(const char* _pkg);
+  void loadFunctions(const char* _pkg);
 public:
   package(const char* _pkg) noexcept;
   ~package() noexcept;
