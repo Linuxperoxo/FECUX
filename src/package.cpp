@@ -4,7 +4,6 @@
 //   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
 //==========================================/
 
-#include <cstddef>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
@@ -20,7 +19,7 @@
 #include "../include/utils/files.hpp"
 
 caroline::package::package(const char* _pkg) noexcept
-  : _pkg_name(nullptr), _pkg_version(nullptr), _pkg_url(nullptr), _pkg_desc(), _pkg_functions(nullptr), _pkg_root(nullptr){ 
+  : _pkg_name(nullptr), _pkg_version(nullptr), _pkg_url(nullptr), _pkg_desc(), _pkg_functions(nullptr), _array_size(0), _pkg_root(nullptr){ 
   try{
     mount(_pkg);
     loadVar(_pkg);
@@ -29,6 +28,7 @@ caroline::package::package(const char* _pkg) noexcept
   
   catch(caroline::caroex& _runtime_error){
     _runtime_error.all();
+    this->~package();
     exit(_runtime_error.errorCode());
   }
 }
@@ -36,11 +36,15 @@ caroline::package::package(const char* _pkg) noexcept
 caroline::package::~package() noexcept{
   std::vector<char**> _class_members = {&_pkg_name, &_pkg_version, &_pkg_url, &_pkg_desc, &_pkg_root};
   for(const auto& _member : _class_members){
-    std::free(*_member);
+    if(*_member != nullptr){
+      std::free(*_member);
+    }
   }
 
-  for(size_t i = 0; i < 6; i++){
-    std::free(_pkg_functions[i]);
+  if(_pkg_functions != nullptr && _array_size > 0){
+    for(size_t i = 0; i < _array_size; i++){
+      std::free(_pkg_functions[i]);
+    }
   }
   std::free(_pkg_functions);
 }
@@ -125,11 +129,7 @@ void caroline::package::loadVar(const char* _pkg){
 
 void caroline::package::loadFunctions(const char* _pkg){
   char* _full_locale = static_cast<char*>(malloc(std::strlen(_pkg_root) + 1 + std::strlen(BUILD_FILE_NAME) + 1));
-  _pkg_functions = static_cast<char**>(malloc(sizeof(char*) * 6));  
-
-  if(_full_locale == nullptr || _pkg_functions == nullptr){
-    std::free(_full_locale);
-    std::free(_pkg_functions);
+  if(_full_locale == nullptr){
     throw caroline::caroex(MEMORY_ALLOCATION_ERROR, "none", "none", _pkg);
   }
 
@@ -140,32 +140,34 @@ void caroline::package::loadFunctions(const char* _pkg){
   if(!files::is_file(_full_locale)){
     std::string _buffer(_full_locale);
     std::free(_full_locale);
-    std::free(_pkg_functions);
     throw caroline::caroex(BUILD_FILE_NOT_FOUND, "none", _buffer.c_str(), _pkg);
   }
 
   const char* _possible_functions[] = {"pre_install", "install", "pos_install", "pre_build", "build", "pos_build"}; 
+  _pkg_functions = static_cast<char**>(malloc(sizeof(char*) * 6));
+  if(_pkg_functions == nullptr){
+    std::string _buffer(_full_locale);
+    std::free(_full_locale);
+    throw caroline::caroex(MEMORY_ALLOCATION_ERROR, "none", "none", _buffer.c_str());
+  }
+
   bool found = false;
 
   for(size_t i = 0; i < sizeof(_possible_functions) / sizeof(_possible_functions[0]); i++){
     std::string _command = "source " + std::string(_full_locale) + " && declare -f " + _possible_functions[i] + " &> /dev/null";
-
     if(system(_command.c_str()) == 0){
-      _pkg_functions[i] = static_cast<char*>(malloc(std::strlen(_possible_functions[i] + 1)));
-      if(_pkg_functions[i] == nullptr){
-        for(size_t j = 0; j < i; j++){
-          std::free(_pkg_functions[j]);
-        }
-        std::free(_pkg_functions);
+      _pkg_functions[_array_size] = static_cast<char*>(std::malloc(std::strlen(_possible_functions[i]) + 1));
+      if(_pkg_functions[_array_size] == nullptr){
         std::free(_full_locale);
         throw caroline::caroex(MEMORY_ALLOCATION_ERROR, "none", "none", _pkg);
       }
+      std::strcpy(_pkg_functions[_array_size], _possible_functions[i]);
+      ++_array_size;
       found = true;
-      std::strcpy(_pkg_functions[i], _possible_functions[i]);
     }
   }
 
-  if(found){
+  if(!found){
     std::string _buffer(_full_locale);
     std::free(_full_locale);
     throw caroline::caroex(NONE_FUNCTIONS_FOUND, "none", _buffer.c_str(), _pkg);

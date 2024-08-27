@@ -7,6 +7,8 @@
 #ifndef PACKAGE_HPP
 #define PACKAGE_HPP
 
+#include <cstddef>
+
 namespace caroline{
 
 class package{
@@ -17,6 +19,7 @@ private:
   char* _pkg_desc;
 
   char** _pkg_functions;
+  size_t _array_size;
 
   char* _pkg_root;
 
