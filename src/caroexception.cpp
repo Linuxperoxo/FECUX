@@ -23,8 +23,8 @@ caroline::caroexception::caroexception(const unsigned int& _error_code, const ch
   const size_t _pkg_len = std::strlen(_pkg) + 1;
   const bool _generic = (std::strcmp(_what, "none") == 0 ? true : false);
 
-  char** ptr[] = {&_exception_what, &_exception_file, &_exception_pkg};
-  const size_t* size[] = {&_what_len, &_file_len, &_pkg_len};
+  char** ptr[3] = {&_exception_what, &_exception_file, &_exception_pkg};
+  const size_t* size[3] = {&_what_len, &_file_len, &_pkg_len};
   for(size_t i = 0; i < sizeof(ptr) / sizeof(ptr[0]); i++){
     *ptr[i] = static_cast<char*>(malloc(*size[i]));
     if(*ptr[i] == nullptr){
@@ -91,7 +91,7 @@ caroline::caroexception::caroexception(const unsigned int& _error_code, const ch
 }
 
 caroline::caroexception::~caroexception() noexcept{
-  char** _class_members_ptr[] = {&_exception_what, &_exception_file, &_exception_pkg};
+  char** _class_members_ptr[3] = {&_exception_what, &_exception_file, &_exception_pkg};
 
   for(size_t i = 0; i < sizeof(_class_members_ptr) / sizeof(_class_members_ptr[0]); i++){
     if(_class_members_ptr[i] != nullptr){

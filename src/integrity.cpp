@@ -7,7 +7,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <libconfig.h++>
-#include <vector>
 #include <thread>
 #include <chrono>
 #include <fstream>
@@ -37,7 +36,7 @@ void caroline::integrity::check_config(){
 
     _libconfig->readFile(CONFIG_FILE);
 
-    const std::vector<const char*> _options_names = {"source_dir", "fakeroot_dir", "cflags", "cxxflags", "jobs"};
+    const char* _options_names[5] = {"source_dir", "fakeroot_dir", "cflags", "cxxflags", "jobs"};
 
     std::string _buffer;
 
@@ -74,7 +73,7 @@ void caroline::integrity::check_config(){
 
 void caroline::integrity::check_dirs(const caroline::configuration& _configuration_buffer){
   try{
-    std::vector<const char*> _dirs = {_configuration_buffer.source_dir(), _configuration_buffer.fakeroot_dir(), REPO_DIR, WORLD_DIR};
+    const char* _dirs[4] = {_configuration_buffer.source_dir(), _configuration_buffer.fakeroot_dir(), REPO_DIR, WORLD_DIR};
 
     for(const auto& dir : _dirs){
       if(!files::is_dir(dir)){
@@ -113,14 +112,14 @@ int caroline::integrity::genConfigFile() noexcept{
     return -1;
   }
   
-  *_ofstream << "source_dir=\"\"\nfakeroot_dir=\"\"\ncflags=\"\"\ncxxflags=\"\"\njobs=\"\"\n";
+  *_ofstream << "# Directory responsible for storing\n# all downloaded sources\n# default (\"/var/lalapkg/source_dir\")\nsource_dir=\"/var/lalapkg/source_dir\"\n\n";
+  *_ofstream << "# Directory where the package will be installed\n# default(\"/tmp/lalapkg/fakeroot\")\nfakeroot_dir=\"/tmp/lalapkg/fakeroot\"\n\n";
+  *_ofstream << "# Optimization flags for C code\ncflags=\"-march=native -O2 -pipe\"\n\n";
+  *_ofstream << "# Optimization flags for C++ code\ncxxflags=\"-march=native -O2 -pipe\"\n\n";
+  *_ofstream << "# Number of threads to use\njobs=\"-j$(nproc)\"\n";
 
   _ofstream->close();
 
   std::free(_raw_ofstream);
-
-  _raw_ofstream = nullptr;
-  _ofstream = nullptr;
-
   return 1;
 }

@@ -31,8 +31,8 @@ caroline::options::options(){
 
     caroline::integrity::check_config();
 
-    const char* _names[] = {"source_dir", "fakeroot_dir", "cflags", "cxxflags", "jobs"};
-    char** _ptrs[] = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
+    const char* _names[5] = {"source_dir", "fakeroot_dir", "cflags", "cxxflags", "jobs"};
+    char** _ptrs[5] = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
 
     void* _raw_libconfig = malloc(sizeof(libconfig::Config));
     if(_raw_libconfig == nullptr){
@@ -68,7 +68,7 @@ caroline::options::options(){
 }
 
 caroline::options::~options() noexcept{
-  char** ptrs[] = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
+  char** ptrs[5] = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
 
   for(const auto& ptr : ptrs){
     std::free(*ptr);

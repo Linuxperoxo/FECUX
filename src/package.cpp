@@ -9,7 +9,6 @@
 #include <filesystem>
 #include <string>
 #include <libconfig.h++>
-#include <vector>
 #include <iostream>
 
 #include "../include/utils/color.hpp"
@@ -34,7 +33,7 @@ caroline::package::package(const char* _pkg) noexcept
 }
 
 caroline::package::~package() noexcept{
-  std::vector<char**> _class_members = {&_pkg_name, &_pkg_version, &_pkg_url, &_pkg_desc, &_pkg_root};
+  char** _class_members[5] = {&_pkg_name, &_pkg_version, &_pkg_url, &_pkg_desc, &_pkg_root};
   for(const auto& _member : _class_members){
     if(*_member != nullptr){
       std::free(*_member);
@@ -143,7 +142,7 @@ void caroline::package::loadFunctions(const char* _pkg){
     throw caroline::caroex(BUILD_FILE_NOT_FOUND, "none", _buffer.c_str(), _pkg);
   }
 
-  const char* _possible_functions[] = {"pre_install", "install", "pos_install", "pre_build", "build", "pos_build"}; 
+  const char* _possible_functions[6] = {"pre_install", "install", "pos_install", "pre_build", "build", "pos_build"}; 
   _pkg_functions = static_cast<char**>(malloc(sizeof(char*) * 6));
   if(_pkg_functions == nullptr){
     std::string _buffer(_full_locale);
