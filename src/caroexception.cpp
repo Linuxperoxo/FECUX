@@ -7,7 +7,6 @@
 #include <cstddef>
 #include <cstring>
 #include <iostream>
-#include <vector>
 #include <cstdlib>
 
 #include "../include/extra/caroexception.hpp"
@@ -22,23 +21,15 @@ caroline::caroexception::caroexception(const unsigned int& _error_code, const ch
   const size_t _what_len = (std::strcmp(_what, "none") == 0 ? GENERIC_WHAT : std::strlen(_what) + 1);
   const size_t _file_len = (std::strcmp(_file, "none") == 0 ? GENERIC_FILE : std::strlen(_file) + 1);
   const size_t _pkg_len = std::strlen(_pkg) + 1;
-
   const bool _generic = (std::strcmp(_what, "none") == 0 ? true : false);
 
-  std::vector<char**> ptr = {&_exception_what, &_exception_file, &_exception_pkg};
-  std::vector<const size_t*> size = {&_what_len, &_file_len, &_pkg_len};
-
-  for(size_t i = 0; i < ptr.size(); i++){
+  char** ptr[] = {&_exception_what, &_exception_file, &_exception_pkg};
+  const size_t* size[] = {&_what_len, &_file_len, &_pkg_len};
+  for(size_t i = 0; i < sizeof(ptr) / sizeof(ptr[0]); i++){
     *ptr[i] = static_cast<char*>(malloc(*size[i]));
     if(*ptr[i] == nullptr){
-      std::cerr << RED "CRITICAL ERROR: " NC "Memory allocation error for the " YELLOW "CAROEXCEPTION " NC "class\n";
-      
-      std::free(_exception_what);
-      _exception_what = nullptr;
-      
-      std::free(_exception_file);
-      _exception_file = nullptr;
-      
+      std::cerr << RED "CRITICAL ERROR: " NC "Memory allocation error for the " YELLOW "CAROEXCEPTION " NC "class\n";  
+      this->~caroexception();
       return;
     }
   }
@@ -100,11 +91,13 @@ caroline::caroexception::caroexception(const unsigned int& _error_code, const ch
 }
 
 caroline::caroexception::~caroexception() noexcept{
-  std::free(_exception_what);
-  _exception_what = nullptr;
+  char** _class_members_ptr[] = {&_exception_what, &_exception_file, &_exception_pkg};
 
-  std::free(_exception_file);
-  _exception_file = nullptr;
+  for(size_t i = 0; i < sizeof(_class_members_ptr) / sizeof(_class_members_ptr[0]); i++){
+    if(_class_members_ptr[i] != nullptr){
+      std::free(_class_members_ptr[i]);
+    }
+  }
 }
 
 void caroline::caroexception::all() const noexcept{

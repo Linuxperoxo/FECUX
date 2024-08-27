@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <libconfig.h++>
 #include <string>
-#include <vector>
 #include <cstring>
 
 #include "../include/caroline/config.hpp"
@@ -32,46 +31,33 @@ caroline::options::options(){
 
     caroline::integrity::check_config();
 
-    std::vector<const char*> _names = {"source_dir", "fakeroot_dir", "cflags", "cxxflags", "jobs"};
-    std::vector<char**> _ptrs = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
+    const char* _names[] = {"source_dir", "fakeroot_dir", "cflags", "cxxflags", "jobs"};
+    char** _ptrs[] = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
 
     void* _raw_libconfig = malloc(sizeof(libconfig::Config));
-
     if(_raw_libconfig == nullptr){
       throw caroline::caroex(MEMORY_ALLOCATION_ERROR);
     }
 
     libconfig::Config* _libconfig = new(_raw_libconfig) libconfig::Config();
-
     _libconfig->readFile(CONFIG_FILE);
 
-    for(size_t i = 0; i < _names.size(); i++){
+    for(size_t i = 0; i < sizeof(_names) / sizeof(_names[0]); i++){
       std::string _buffer;
-      
       _libconfig->lookupValue(_names[i], _buffer);
-      
       *_ptrs[i] = static_cast<char*>(malloc(std::strlen(_buffer.c_str()) + 1));
-      
       if(*_ptrs[i] == nullptr){
         for(size_t k = 0; k < i; k++){
           std::free(*_ptrs[i]);
         }
         _libconfig->~Config();
-        _libconfig = nullptr;
-
         std::free(_raw_libconfig);
-        _raw_libconfig = nullptr;
-        
         throw caroline::caroex(MEMORY_ALLOCATION_ERROR);
       }
       std::strcpy(*_ptrs[i], _buffer.c_str());
     }
     _libconfig->~Config();
-    _libconfig = nullptr;
-
-    std::free(_raw_libconfig);
-    _raw_libconfig = nullptr;
-    
+    std::free(_raw_libconfig);  
     configured = true;
   }
 
@@ -82,7 +68,7 @@ caroline::options::options(){
 }
 
 caroline::options::~options() noexcept{
-  std::vector<char**> ptrs = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
+  char** ptrs[] = {&source_dir, &fakeroot_dir, &cflags, &cxxflags, &jobs};
 
   for(const auto& ptr : ptrs){
     std::free(*ptr);
@@ -95,11 +81,9 @@ caroline::configuration::configuration()
 
   try{
     _option = static_cast<options*>(malloc(sizeof(options)));
-
     if(_option == nullptr){
       throw caroline::caroex(MEMORY_ALLOCATION_ERROR);
     }
-
     new(_option) options();
   } 
 
@@ -112,8 +96,6 @@ caroline::configuration::configuration()
 caroline::configuration::~configuration() noexcept{
   _option->~options();
   std::free(_option);
-
-  _option = nullptr;
 }
 
 const char* caroline::configuration::source_dir() const noexcept{
