@@ -22,7 +22,8 @@ namespace fecux{
       void push(const char* _str);
       void init(const char* _str);
     public:
-      string(const char* _new_string = "");
+      string() noexcept;
+      string(const char* _new_string);
       string(string& _other_string);
       string(string&& _other_string) noexcept;
       
