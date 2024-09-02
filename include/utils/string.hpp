@@ -15,8 +15,8 @@ namespace fecux{
   namespace utils{
     class string{
     private:
-      char* _string{nullptr};
-      size_t _string_size{0};
+      char* _string;
+      size_t _string_size;
       
       void cat(const char* _str);
       void push(const char* _str);
@@ -34,6 +34,7 @@ namespace fecux{
       string& operator=(const char* _new_string);
       string& operator=(string& _other_string);
       string& operator=(string&& _other_string);       
+      string& operator+=(const char* _cat_string);
       string& operator+(const char* _cat_string);
       string& operator+(string& _cat_string);
       
