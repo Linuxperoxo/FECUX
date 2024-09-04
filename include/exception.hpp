@@ -3,28 +3,34 @@
 
 #include "string.hpp"
 
-#define MEMORY_ALLOC_ERROR 101
+#define CONFIG_FILE_NOT_FOUND 101
+#define FAILED_TO_LOAD_OPT 102
 
 namespace fecux{
   namespace tools{
     namespace runtime{
       class exception{
       private:
-      fecux::utils::string _what;
-      unsigned int _error_code;
+        fecux::utils::string _what;
+        unsigned int _error_code;
+        
+        exception(const exception&) = delete;
+        exception(const exception&&) = delete;
+        exception& operator=(const exception&) = delete;
+        exception& operator=(const exception&&) = delete;
       public:
         explicit exception(const unsigned int& _error_code) noexcept;
-        explicit exception(fecux::utils::string& _what, const unsigned int& _error_code) noexcept;
+        
+        inline explicit exception(fecux::utils::string& _what, const unsigned int& _error_code) noexcept
+          : _what(_what),
+            _error_code(_error_code){
+          }
         
         ~exception() noexcept = default;
         
-        inline const char* what() const noexcept{
-          return *_what;
-        }
+        const char* what() const noexcept;
         
-        inline unsigned int error_code() const noexcept{
-          return _error_code;
-        }
+        unsigned int error_code() const noexcept;
       };
     }    
   }

@@ -5,6 +5,7 @@
 //==========================================/
 
 #include <cstdarg>
+#include <cstddef>
 #include <iostream>
 
 #include "../include/string.hpp"
@@ -29,7 +30,7 @@ fecux::utils::string::string(const char* _src_str) noexcept
   }
 
   catch(std::bad_alloc& _runtime_error){
-    std::cout << RED << "ERROR: " << NC << _runtime_error.what() << '\n';
+    std::cout << RED << "CRITICAL ERROR: " << NC << "Memory alloc error " << _runtime_error.what() << '\n';
     exit(EXIT_FAILURE);
   }
 }
@@ -38,11 +39,12 @@ fecux::utils::string::string(fecux::utils::string& _src_str) noexcept
   : _str(nullptr),
     _str_size(_src_str._str_size){
   try{
-    _alloc_str(_src_str._str, _src_str._str_size);
+    const char* _buffer = const_cast<char*>(_src_str._str);
+    _alloc_str(_buffer, _src_str._str_size);
   } 
 
   catch(std::bad_alloc& _runtime_error){
-    std::cout << RED << "ERROR: " << NC << _runtime_error.what() << '\n';
+    std::cout << RED << "CRITICAL ERROR: " << NC << "Memory alloc error " << _runtime_error.what() << '\n';
     exit(EXIT_FAILURE);
   }
 }
@@ -96,7 +98,8 @@ fecux::utils::string& fecux::utils::string::operator=(const char* _src_str) noex
 
 fecux::utils::string& fecux::utils::string::operator=(fecux::utils::string& _src_str) noexcept{
   try{
-    _alloc_str(_src_str._str, _src_str._str_size);
+    const char* _buffer = const_cast<char*>(_src_str._str);
+    _alloc_str(_buffer, _src_str._str_size);
   } 
 
   catch(std::bad_alloc& _runtime_error){
@@ -128,13 +131,25 @@ fecux::utils::string& fecux::utils::string::operator=(fecux::utils::string&& _sr
 
 
 /*
+
+=============|
+OPERATOR '*' |
+=============|
+
+ */
+
+const char* fecux::utils::string::operator*() const noexcept{
+  return &*_str;
+}
+
+/*
  
 ============================================================|
 CLASS MEMBER FUNCTIONS 
 
 */
 
-inline void fecux::utils::string::_alloc_str(const char* _src_str, const size_t& _src_str_size){
+void fecux::utils::string::_alloc_str(const char*& _src_str, const size_t& _src_str_size){
   char* _buffer_str = static_cast<char*>(std::malloc(_src_str_size + 1));
   
   if(_buffer_str == nullptr){
@@ -152,3 +167,19 @@ inline void fecux::utils::string::_alloc_str(const char* _src_str, const size_t&
   _str = _buffer_str;
 }
 
+inline void fecux::utils::string::clean() const noexcept{
+  if(&*_str != nullptr){
+    std::free(&*_str);
+  }
+}
+
+/*
+ 
+===========================================================|
+GETS
+
+ */
+
+size_t fecux::utils::string::len() const noexcept{
+  return _str_size;
+}

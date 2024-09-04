@@ -19,7 +19,7 @@ namespace fecux{
       char* _str;
       size_t _str_size;
       
-      void _alloc_str(const char* _src_str, const size_t& _src_str_size);
+      void _alloc_str(const char*& _src_str, const size_t& _src_str_size);
     public:
       string() noexcept;
       string(const char* _src_str) noexcept;
@@ -32,18 +32,9 @@ namespace fecux{
       string& operator=(string& _src_str) noexcept;
       string& operator=(string&& _src_str) noexcept;
       
-      inline const char* operator*() const noexcept{
-        return &*_str;
-      }
+      const char* operator*() const noexcept;
       
-      inline size_t len() noexcept{
-        return _str_size;
-      }
-      
-      inline void clean() noexcept{
-        std::free(&*_str);
-        _str_size = 0;
-      }
+      void clean() const noexcept;
       
       template <typename... Args>
       const char* _cat_str(Args... args){
@@ -85,6 +76,8 @@ namespace fecux{
          
         return _str;
       }
+      
+      size_t len() const noexcept;  
     };
   }
 }
