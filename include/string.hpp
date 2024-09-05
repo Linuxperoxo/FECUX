@@ -19,7 +19,7 @@ namespace fecux{
       char* _str;
       size_t _str_size;
       
-      void _alloc_str(const char*& _src_str, const size_t& _src_str_size);
+      void _mov_str(const char* _buffer_str, const size_t& _src_str_size);
     public:
       string() noexcept;
       string(const char* _src_str) noexcept;

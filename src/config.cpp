@@ -59,12 +59,14 @@ fecux::main::config::config()
         std::free(&*_options);
 
         fecux::utils::string _what = "An error occurred while trying to load the option -> ";
-        _what._cat_str(RED, _conf_file_opts_name[i], NC, " Check config file -> ", RED, CONFIG_FILE, NC);
+        _what._cat_str(RED, _conf_file_opts_name[i], NC, "! Check config file -> ", RED, CONFIG_FILE, NC);
 
         throw fecux::tools::runtime::exception(_what, FAILED_TO_LOAD_OPT);
       }
       *_config_file_opts_ref[i] = _buffer.c_str();
     }
+    expurg_obj(&*_libconfig);
+    std::free(&*_libconfig);
   }
 
   catch(fecux::tools::runtime::exception& _runtime_error){
@@ -91,6 +93,7 @@ DESTROYER
  */
 
 fecux::main::config::~config() noexcept{
+  expurg_obj(&*_options);
   std::free(&*_options);
 }
 
