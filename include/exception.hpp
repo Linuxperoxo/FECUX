@@ -1,3 +1,9 @@
+//==========================================|
+//   FILE: exception.cpp                    |
+//   AUTHOR: Linuxperoxo                    |
+//   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
+//==========================================/
+
 #ifndef __EXCEPTION_HPP__
 #define __EXCEPTION_HPP__
 
