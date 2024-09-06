@@ -23,6 +23,11 @@ fecux::tools::runtime::exception::exception(const unsigned int& _error_code) noe
       _what = "Configuration file was not found in -> ";
       _what._cat_str(RED, CONFIG_FILE, NC);
     break;
+    
+    case MAIN_REPO_IS_EMPTY:
+      _what = "Your current repository is empty, if you don't have any custom repository you should use ";
+      _what._cat_str(GREEN, "fecux -s", NC, " to sync your local repository");
+    break;
   }
 }
 
