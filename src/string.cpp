@@ -37,7 +37,7 @@ fecux::utils::string::string(const char* _src_str) noexcept
   }
 }
 
-fecux::utils::string::string(fecux::utils::string& _src_str) noexcept 
+fecux::utils::string::string(const fecux::utils::string& _src_str) noexcept 
   : _str(nullptr),
     _str_size(_src_str._str_size){
   try{
@@ -51,7 +51,7 @@ fecux::utils::string::string(fecux::utils::string& _src_str) noexcept
 }
 
 fecux::utils::string::string(string&& _src_str) noexcept
-  : _str(nullptr),
+  : _str(_src_str._str),
     _str_size(_src_str._str_size){
   _src_str._str = nullptr;
   _src_str._str_size = 0;
@@ -97,7 +97,7 @@ fecux::utils::string& fecux::utils::string::operator=(const char* _src_str) noex
   return *this;
 }
 
-fecux::utils::string& fecux::utils::string::operator=(fecux::utils::string& _src_str) noexcept{
+fecux::utils::string& fecux::utils::string::operator=(const fecux::utils::string& _src_str) noexcept{
   try{
     _mov_str(_src_str._str, _src_str._str_size);
   } 
@@ -152,14 +152,14 @@ CLASS MEMBER FUNCTIONS
 void fecux::utils::string::_mov_str(const char* _src_str, const size_t& _src_str_size){
   char* _buffer_str = static_cast<char*>(std::malloc(_src_str_size + 1));
 
-  if(&*_buffer_str == nullptr){
+  if(_buffer_str == nullptr){
     throw std::bad_alloc();
   }
 
-  std::memcpy(&*_buffer_str, &*_src_str, _src_str_size);
+  std::memcpy(_buffer_str, _src_str, _src_str_size);
 
-  if(&*_str != nullptr){
-    std::free(&*_str);
+  if(_str != nullptr){
+    std::free(_str);
     _str = nullptr;
   }
 
@@ -169,8 +169,8 @@ void fecux::utils::string::_mov_str(const char* _src_str, const size_t& _src_str
 }
 
 inline void fecux::utils::string::clean() const noexcept{
-  if(&*_str != nullptr){
-    std::free(&*_str);
+  if(_str != nullptr){
+    std::free(_str);
   }
 }
 
