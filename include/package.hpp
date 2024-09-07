@@ -20,19 +20,28 @@ namespace fecux{
         fecux::utils::string _pkg_desc;
         fecux::utils::string _pkg_root; 
       
-        pkg_info() = delete;
-        pkg_info(const pkg_info&)    = delete;
-        pkg_info(pkg_info&&)   = delete;
-        pkg_info& operator=(const pkg_info&)  = delete;
-        pkg_info& operator=(pkg_info&&) = delete;
+        inline explicit pkg_info() noexcept
+          : _pkg_name(),
+            _pkg_version(),
+            _pkg_url(),
+            _pkg_desc(),
+            _pkg_root(){
+          
+        }
+        
+        pkg_info(const pkg_info&)            = delete;
+        pkg_info(pkg_info&&)                 = delete;
+        pkg_info& operator=(const pkg_info&) = delete;
+        pkg_info& operator=(pkg_info&&)      = delete;
         
         ~pkg_info() noexcept = default;
       }info;
       
       info* _pkg_info;
       
-      info* init_struct();
-      const char* package_exist(const char* _pkg_name); 
+      void init_struct();
+      void package_exist(const char* _pkg_name); 
+      void populate_struct();
     public:
       explicit package(const char* _pkg_name) noexcept;
       ~package() noexcept;
