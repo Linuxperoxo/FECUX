@@ -22,22 +22,22 @@ namespace fecux{
         fecux::utils::string _what;
         unsigned int _error_code;
         
-        exception(const exception&) = delete;
-        exception(const exception&&) = delete;
+        exception(const exception&)            = delete;
+        exception(exception&&)                 = delete;
         exception& operator=(const exception&) = delete;
-        exception& operator=(const exception&&) = delete;
+        exception& operator=(exception&&)      = delete;
       public:
         explicit exception(const unsigned int& _error_code) noexcept;
         
         inline explicit exception(fecux::utils::string& _what, const unsigned int& _error_code) noexcept
           : _what(_what),
             _error_code(_error_code){
-          }
+          
+        }
         
         ~exception() noexcept = default;
         
-        const char* what() const noexcept;
-        
+        const char* what() const noexcept; 
         unsigned int error_code() const noexcept;
       };
     }    

@@ -19,6 +19,14 @@ namespace fecux{
         fecux::utils::string _pkg_url;
         fecux::utils::string _pkg_desc;
         fecux::utils::string _pkg_root; 
+      
+        pkg_info() = delete;
+        pkg_info(const pkg_info&)    = delete;
+        pkg_info(pkg_info&&)   = delete;
+        pkg_info& operator=(const pkg_info&)  = delete;
+        pkg_info& operator=(pkg_info&&) = delete;
+        
+        ~pkg_info() noexcept = default;
       }info;
       
       info* _pkg_info;

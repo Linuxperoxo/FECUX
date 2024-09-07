@@ -15,10 +15,10 @@ namespace fecux{
       class integrity{
       private:
         integrity() = delete;
-        integrity(const integrity&) = delete;
-        integrity(const integrity&&) = delete;
+        integrity(const integrity&)            = delete;
+        integrity(integrity&&)                 = delete;
         integrity& operator=(const integrity&) = delete;
-        integrity& operator=(const integrity&&) = delete;
+        integrity& operator=(integrity&&)      = delete;
       public:
         static void verify_dirs(const fecux::main::config* _config) noexcept;
       };

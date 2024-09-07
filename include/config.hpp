@@ -32,14 +32,20 @@ namespace fecux{
             _jobs(){
           };
           
+        options(const options&)            = delete;
+        options(options&&)                 = delete;
+        options& operator=(const options&) = delete;
+        options& operator=(options&&)      = delete;
+      
         ~options() = default;
       }opts;
+      
       opts* _options;
       
-      config(const config&) = delete;
-      config(const config&&) = delete;
+      config(const config&)            = delete;
+      config(config&&)                 = delete;
       config& operator=(const config&) = delete;
-      config& operator=(const config&&) = delete;
+      config& operator=(config&&)      = delete;
     public:
       explicit config();
       
