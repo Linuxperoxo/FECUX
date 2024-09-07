@@ -11,7 +11,6 @@
 
 #include "../include/integrity.hpp"
 #include "../include/color.hpp"
-#include "../include/exception.hpp"
 #include "../include/fecux_vars.hpp"
 #include "../include/files_utils.hpp"
 
@@ -26,7 +25,7 @@ CLASS MEMBER FUNCTIONS
  
  */
 
-void fecux::tools::runtime::integrity::verify_dirs(const fecux::main::config *_config){
+void fecux::tools::runtime::integrity::verify_dirs(const fecux::main::config *_config) noexcept{
   const char* _dirs[NUM_CHECK_DIRS] = {_config->source_dir(), _config->fakeroot_dir(), MAIN_REPO_DIR, WORLD_DIR};
 
   for(size_t i = 0; i < sizeof(_dirs) / sizeof(_dirs[0]); i++){
@@ -35,12 +34,5 @@ void fecux::tools::runtime::integrity::verify_dirs(const fecux::main::config *_c
       std::cerr << YELLOW << "::: " << NC << GREEN << _dirs[i] << NC << " Created! :)\n";
       std::this_thread::sleep_for(std::chrono::milliseconds(DELAY));
     }
-  }
-  try{
-    if(fecux::tools::runtime::filesUtils::is_empty(MAIN_REPO_DIR)) throw fecux::tools::runtime::exception(MAIN_REPO_IS_EMPTY);
-  }
-
-  catch(fecux::tools::runtime::exception& _runtime_warning){
-    std::cerr << YELLOW << "WARNING: " << NC << _runtime_warning.what() << '\n';
   }
 }

@@ -12,6 +12,7 @@
 #define CONFIG_FILE_NOT_FOUND 101
 #define FAILED_TO_LOAD_OPT 102
 #define MAIN_REPO_IS_EMPTY 103
+#define PKG_NOT_FOUND 104
 
 namespace fecux{
   namespace tools{

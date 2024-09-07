@@ -20,7 +20,7 @@ namespace fecux{
         integrity& operator=(const integrity&) = delete;
         integrity& operator=(const integrity&&) = delete;
       public:
-        static void verify_dirs(const fecux::main::config* _config);
+        static void verify_dirs(const fecux::main::config* _config) noexcept;
       };
     }
   }

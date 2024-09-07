@@ -31,6 +31,8 @@ namespace fecux{
             _cxxflags(),
             _jobs(){
           };
+          
+        ~options() = default;
       }opts;
       opts* _options;
       
