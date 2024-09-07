@@ -21,6 +21,7 @@ namespace fecux{
         integrity& operator=(integrity&&)      = delete;
       public:
         static void verify_dirs(const fecux::main::config* _config) noexcept;
+        static char** verify_infos(const char* _file); 
       };
     }
   }
