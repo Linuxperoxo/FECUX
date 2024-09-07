@@ -4,9 +4,12 @@
 //   COPYRIGHT: (c) 2024 per Linuxperoxo.   |
 //==========================================/
 
+#include <utility>
+
 #include "../include/exception.hpp"
 #include "../include/color.hpp"
 #include "../include/fecux_vars.hpp"
+#include "../include/string.hpp"
 
 /*
  
@@ -29,6 +32,18 @@ fecux::tools::runtime::exception::exception(const unsigned int& _error_code) noe
       _what._cat_str(GREEN, "fecux -s", NC, " to sync your local repository");
     break;
   }
+}
+
+fecux::tools::runtime::exception::exception(exception&& _other) noexcept
+  : _what(std::move(_other._what)),
+    _error_code(_other._error_code){
+    _other._error_code = 0;
+}
+
+fecux::tools::runtime::exception::exception(fecux::utils::string& _what, const unsigned int& _error_code) noexcept
+  : _what(_what),
+    _error_code(_error_code){
+
 }
 
 /*

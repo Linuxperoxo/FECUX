@@ -13,6 +13,8 @@
 #define FAILED_TO_LOAD_OPT 102
 #define MAIN_REPO_IS_EMPTY 103
 #define PKG_NOT_FOUND 104
+#define INFOPKG_FILE_NOT_FOUND 105
+#define FAILED_TO_LOAD_INFO 106
 
 namespace fecux{
   namespace tools{
@@ -23,17 +25,12 @@ namespace fecux{
         unsigned int _error_code;
         
         exception(const exception&)            = delete;
-        exception(exception&&)                 = delete;
         exception& operator=(const exception&) = delete;
         exception& operator=(exception&&)      = delete;
       public:
         explicit exception(const unsigned int& _error_code) noexcept;
-        
-        inline explicit exception(fecux::utils::string& _what, const unsigned int& _error_code) noexcept
-          : _what(_what),
-            _error_code(_error_code){
-          
-        }
+        explicit exception(exception&& _other) noexcept;
+        explicit exception(fecux::utils::string& _what, const unsigned int& _error_code) noexcept;   
         
         ~exception() noexcept = default;
         
