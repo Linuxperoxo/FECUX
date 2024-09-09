@@ -14,7 +14,7 @@
 #define MAIN_REPO_IS_EMPTY 103
 #define PKG_NOT_FOUND 104
 #define INFOPKG_FILE_NOT_FOUND 105
-#define FAILED_TO_LOAD_INFO 106
+#define FAILED_TO_LOAD_VAR 106
 
 namespace fecux{
   namespace tools{
