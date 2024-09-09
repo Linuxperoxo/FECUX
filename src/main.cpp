@@ -1,5 +1,4 @@
 #include <cstdlib>
-#include <iostream>
 
 #include "../include/config.hpp"
 #include "../include/managerobj.hpp"
