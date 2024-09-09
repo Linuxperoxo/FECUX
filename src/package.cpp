@@ -99,32 +99,22 @@ void fecux::main::package::populate_struct(){
     throw fecux::tools::runtime::exception(_what, INFOPKG_FILE_NOT_FOUND);
   }
 
-  try{
-    char** _infos_value = fecux::tools::runtime::integrity::verify_infos(*_info_file_locale);
+  char** _infos_value = fecux::tools::runtime::integrity::verify_infos(*_info_file_locale);
     
-    fecux::utils::string* _infos_ref[NUM_INFOS] = {
-      &_pkg_info->_pkg_name, 
-      &_pkg_info->_pkg_version, 
-      &_pkg_info->_pkg_url, 
-      &_pkg_info->_pkg_desc
-    }; 
+  fecux::utils::string* _infos_ref[NUM_INFOS] = {
+    &_pkg_info->_pkg_name, 
+    &_pkg_info->_pkg_version, 
+    &_pkg_info->_pkg_url, 
+    &_pkg_info->_pkg_desc
+  }; 
     
-    for(size_t i = 0; i < NUM_INFOS; i++){
-      *_infos_ref[i] = _infos_value[i];
-      std::free(_infos_value[i]);
-    }
-    std::free(_infos_value);
+  for(size_t i = 0; i < NUM_INFOS; i++){
+    *_infos_ref[i] = _infos_value[i];
+    std::free(_infos_value[i]);
   }
-
-  catch(fecux::tools::runtime::exception& _runtime_error){
-    throw fecux::tools::runtime::exception(std::move(_runtime_error));
-  }
-
-  catch(std::bad_alloc&){
-    throw std::bad_alloc();
-  }
-} 
-
+  std::free(_infos_value);
+}
+  
 /*
 
 ===========================================================|

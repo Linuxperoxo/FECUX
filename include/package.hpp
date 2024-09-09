@@ -9,6 +9,8 @@
 
 #include "string.hpp"
 
+#define INFO_NUM 5
+
 namespace fecux{
   namespace main{
     class package{
