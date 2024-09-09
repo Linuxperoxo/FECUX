@@ -5,8 +5,10 @@
 //==========================================/
 
 #include <chrono>
+#include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <new>
 #include <string>
 #include <thread>
 #include <iostream>
@@ -18,10 +20,10 @@
 #include "../include/files_utils.hpp"
 #include "../include/managerobj.hpp"
 #include "../include/exception.hpp"
+#include "../include/package.hpp"
 
 #define NUM_CHECK_DIRS 4
 #define DELAY 500
-#define NUM_INFOS 4
 
 /*
  
@@ -29,6 +31,52 @@
 CLASS MEMBER FUNCTIONS
  
  */
+
+char** fecux::tools::runtime::integrity::read_file(const char** _names, const size_t& _element_size, const char* _file){
+  libconfig::Config* _libconfig = static_cast<libconfig::Config*>(std::malloc(sizeof(libconfig::Config)));
+  char** _src = static_cast<char**>(std::malloc(sizeof(char*) * _element_size));
+
+  if(_libconfig == nullptr || _src == nullptr){
+    if(_libconfig != nullptr) std::free(_libconfig);
+    if(_src != nullptr) std::free(_src);
+    throw std::bad_alloc();
+  }
+
+  make_obj<libconfig::Config>(_libconfig); _libconfig->readFile(_file);
+
+  std::string _buffer;
+
+  for(size_t i = 0; i < _element_size; i++){
+    if(!_libconfig->lookupValue(_names[i], _buffer) || _buffer.empty()){
+      for(size_t c = 0; c < i; c++){
+        std::free(_src[c]);
+      }
+      expurg_obj(_libconfig);
+      std::free(_libconfig);
+      std::free(_src);
+
+      fecux::utils::string _what;
+      _what._cat_str("Unable to load the variable -> ", RED, _names[i], NC, " in file -> ", RED, _file, NC);
+      throw fecux::tools::runtime::exception(_what, FAILED_TO_LOAD_VAR);
+    }
+    
+    const size_t _str_size = std::strlen(_buffer.c_str());  
+
+    _src[i] = static_cast<char*>(std::malloc(_str_size));
+    
+    if(_src[i] == nullptr){
+      for(size_t k = 0; k < i; k++){
+        std::free(_src[k]);
+      }
+      expurg_obj(_libconfig);
+      std::free(_libconfig);
+      std::free(_src);
+      throw std::bad_alloc();
+    }
+    std::memcpy(_src[i], _buffer.c_str(), _str_size);
+  }
+  return _src;
+}
 
 void fecux::tools::runtime::integrity::verify_dirs(const fecux::main::config *_config) noexcept{
   const char* _dirs[NUM_CHECK_DIRS] = {
@@ -47,50 +95,23 @@ void fecux::tools::runtime::integrity::verify_dirs(const fecux::main::config *_c
   }
 }
 
-char** fecux::tools::runtime::integrity::verify_infos(const char* _file){
-  libconfig::Config* _libconfig = static_cast<libconfig::Config*>(std::malloc(sizeof(libconfig::Config)));
-  char** _infos_array = static_cast<char**>(std::malloc(sizeof(char*) * NUM_INFOS));
-  
-  if(_libconfig == nullptr || _infos_array == nullptr) throw std::bad_alloc();
-  
-  make_obj<libconfig::Config>(_libconfig);
-  _libconfig->readFile(_file);
-  
-  const char* _infos_name[NUM_INFOS] = {
+char** fecux::tools::runtime::integrity::verify_config(){
+  const char* _options_name[OPTS_NUM] = {
+    "source_dir", 
+    "fakeroot_dir", 
+    "cflags", 
+    "cxxflags", 
+    "jobs"
+  };
+  return read_file(_options_name, OPTS_NUM, CONFIG_FILE);
+}
+
+char** fecux::tools::runtime::integrity::verify_infos(const char* _info_file){
+  const char* _infos_name[INFO_NUM] = {
     "pkg_name", 
     "pkg_version", 
     "pkg_url", 
     "pkg_desc", 
   };
-
-  std::string _buffer;
-
-  for(int i = 0; i < NUM_INFOS; i++){
-    if(!_libconfig->lookupValue(_infos_name[i], _buffer) || _buffer.empty()){
-      for(int c = 0; c < i; c++){
-        std::free(_infos_array[c]);
-      }
-      expurg_obj(_libconfig);
-      std::free(_libconfig);
-      std::free(_infos_array);
-
-      fecux::utils::string _what;
-      _what._cat_str("Unable to load the variable -> ", RED, _infos_name[i], NC, " in file -> ", RED, _file, NC);
-      throw fecux::tools::runtime::exception(_what, FAILED_TO_LOAD_INFO);
-    }
-
-    _infos_array[i] = static_cast<char*>(std::malloc(std::strlen(_buffer.c_str()) + 1));
-    
-    if(_infos_array[i] == nullptr){
-      for(int k = 0; k < i; k++){
-        std::free(_infos_array[k]);
-      }
-      expurg_obj(_libconfig);
-
-      std::free(_libconfig);
-      std::free(_infos_array);
-    }
-    std::strcpy(_infos_array[i], _buffer.c_str());
-  }
-  return _infos_array;
+  return read_file(_infos_name, INFO_NUM, _info_file);
 }
