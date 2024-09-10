@@ -18,5 +18,6 @@ constexpr const char* CONFIG_FILE   = "/etc/fecux.conf";
 constexpr const char* MAIN_REPO_DIR = "/var/db/fecux/repos/main";
 constexpr const char* WORLD_DIR     = "/var/db/fecux/pkgs/world";
 constexpr const char* INFOPKG_FILE  = "pkginfo";
+constexpr const char* BUILDPKG_FILE = "makepkg";
 
 #endif

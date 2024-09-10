@@ -23,13 +23,11 @@ fecux::tools::runtime::exception::exception(const unsigned int& _error_code) noe
     _error_code(_error_code){
   switch(_error_code){
     case CONFIG_FILE_NOT_FOUND:
-      _what = "Configuration file was not found in -> ";
-      _what._cat_str(RED, CONFIG_FILE, NC);
+      _what._cat_str("Configuration file was not found in -> ", RED, CONFIG_FILE, NC);
     break;
     
     case MAIN_REPO_IS_EMPTY:
-      _what = "Your current repository is empty, if you don't have any custom repository you should use ";
-      _what._cat_str(GREEN, "fecux -s", NC, " to sync your local repository");
+      _what._cat_str("Your current repository is empty, if you don't have any custom repository you should use ", GREEN, "fecux -s", NC, " to sync your local repository");
     break;
   }
 }

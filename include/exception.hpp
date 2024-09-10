@@ -15,6 +15,8 @@
 #define PKG_NOT_FOUND 104
 #define INFOPKG_FILE_NOT_FOUND 105
 #define FAILED_TO_LOAD_VAR 106
+#define NONE_FUNCTION_FOUND 107
+#define BUILDPKG_FILE_NOT_FOUND 108
 
 namespace fecux{
   namespace tools{
