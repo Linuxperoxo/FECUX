@@ -37,8 +37,8 @@ char** fecux::tools::runtime::integrity::read_file(const char** _names, const si
   char** _src = static_cast<char**>(std::malloc(sizeof(char*) * _element_size));
 
   if(_libconfig == nullptr || _src == nullptr){
-    if(_libconfig != nullptr) std::free(_libconfig);
-    if(_src != nullptr) std::free(_src);
+    std::free(_libconfig);
+    std::free(_src);
     throw std::bad_alloc();
   }
 
