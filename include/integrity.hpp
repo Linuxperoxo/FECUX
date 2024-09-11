@@ -9,25 +9,27 @@
 
 #include "config.hpp"
 
-namespace fecux{
-  namespace tools{
-    namespace runtime{
-      class integrity{
-      private:
-        integrity()                            = delete;
-        integrity(const integrity&)            = delete;
-        integrity(integrity&&)                 = delete;
-        integrity& operator=(const integrity&) = delete;
-        integrity& operator=(integrity&&)      = delete;
-        
-        static char** read_file(const char** _names, const size_t& _element_size, const char* _file);
-      public:
-        static void verify_dirs(const fecux::main::config* _config) noexcept;
-        static char** verify_config();
-        static char** verify_infos(const char* _info_file);
-      };
-    }
-  }
-}
+namespace fecux {
+namespace tools {
+namespace runtime {
+class integrity {
+private:
+  integrity() = delete;
+  integrity(const integrity &) = delete;
+  integrity(integrity &&) = delete;
+  integrity &operator=(const integrity &) = delete;
+  integrity &operator=(integrity &&) = delete;
+
+  static char **read_file(const char **_names, const size_t &_element_size,
+                          const char *_file);
+
+public:
+  static void verify_dirs(const fecux::main::config *_config) noexcept;
+  static char **verify_config();
+  static char **verify_infos(const char *_info_file);
+};
+} // namespace runtime
+} // namespace tools
+} // namespace fecux
 
 #endif
