@@ -8,8 +8,8 @@
 #include <iostream>
 #include <thread>
 
+#include "../include/animation.hpp"
 #include "../include/color.hpp"
-#include "animation.hpp"
 
 #define FPS 5
 
@@ -40,7 +40,11 @@ void fecux::utils::animation::run(std::atomic<bool> *_running,
       std::cout << '\r' << _loading_msg << ' ' << BLUE << '[' << NC
                 << _animation_frames[i] << BLUE << ']' << NC;
       std::cout.flush();
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FPS));
+
+      if (!_running->load()) {
+        break;
+      }
+      // std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FPS));
     }
   }
   std::cout << '\n';

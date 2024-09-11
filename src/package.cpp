@@ -10,7 +10,9 @@
 #include <iostream>
 #include <libconfig.h++>
 #include <new>
+#include <thread>
 
+#include "../include/animation.hpp"
 #include "../include/color.hpp"
 #include "../include/exception.hpp"
 #include "../include/fecux_vars.hpp"
@@ -49,6 +51,11 @@ fecux::main::package::package(const char *_pkg_name) noexcept
               << NC << '\n';
     exit(EXIT_FAILURE);
   }
+
+  catch (std::bad_alloc &_bad_alloc) {
+    std::cerr << RED << "PACKAGE FAILED: " << NC << _pkg_name << '\n';
+    std::cerr << RED << "ERROR: " << NC << _bad_alloc.what() << '\n';
+  }
 }
 
 /*
@@ -63,8 +70,8 @@ fecux::main::package::~package() noexcept {
     expurg_obj(_pkg_info);
     expurg_obj(_pkg_func);
 
-    // std::free(_pkg_info);
-    // std::free(_pkg_func);
+    std::free(_pkg_info);
+    std::free(_pkg_func);
   }
 }
 
@@ -176,6 +183,73 @@ void fecux::main::package::load_functions() {
                  _enable_functs[5]);
 }
 
+void fecux::main::package::exec_functions(const char **_func_names,
+                                          const unsigned **_func_ref,
+                                          const int &_possible_func,
+                                          const bool &_use_animation,
+                                          const char *_animation_msg) {
+  std::atomic<bool> *_running{nullptr};
+  std::thread *_animation_thread{nullptr};
+
+  if (_use_animation) {
+    _running = static_cast<std::atomic<bool> *>(
+        std::malloc(sizeof(std::atomic<bool>)));
+    _animation_thread =
+        static_cast<std::thread *>(std::malloc(sizeof(std::thread)));
+    if (_running == nullptr || _animation_thread == nullptr) {
+      std::free(_running);
+      std::free(_animation_thread);
+      throw std::bad_alloc();
+    }
+    make_obj<std::atomic<bool>>(_running, true);
+    make_obj<std::thread>(_animation_thread, fecux::utils::animation::run,
+                          _running, _animation_msg);
+  }
+
+  fecux::utils::string _build_file_locale;
+  fecux::utils::string _command;
+
+  _build_file_locale._cat_str(*_pkg_info->_pkg_root, "/", BUILDPKG_FILE);
+
+  for (int i = 0; i < _possible_func; i++) {
+    if (*_func_ref[i] == 1) {
+      _command._cat_str("source ", *_build_file_locale, " && ", _func_names[i],
+                        " &> /dev/null");
+      if (system(*_command) != 0) {
+        fecux::utils::string _what;
+
+        if (_running != nullptr) {
+          _running->store(false);
+          _animation_thread->join();
+
+          expurg_obj(_running);
+          expurg_obj(_animation_thread);
+
+          std::free(_running);
+          std::free(_animation_thread);
+        }
+
+        _what._cat_str("An error occurred in functions -> ", RED,
+                       _func_names[i], NC, " file -> ", RED,
+                       *_build_file_locale, NC, ". Check it! :/");
+        throw fecux::tools::runtime::exception(_what, ERROR_FUNCTION_BUILD);
+      }
+      _command.clean();
+    }
+  }
+
+  if (_running != nullptr) {
+    _running->store(false);
+    _animation_thread->join();
+
+    expurg_obj(_running);
+    expurg_obj(_animation_thread);
+
+    std::free(_running);
+    std::free(_animation_thread);
+  }
+}
+
 void fecux::main::package::exec_build_functions() {
   const char *_build_functions_name[BUILD_POSSIBLE_FUNCTS]{"pre_build", "build",
                                                            "pos_build"};
@@ -183,25 +257,20 @@ void fecux::main::package::exec_build_functions() {
   const unsigned int *_build_functions_ref[BUILD_POSSIBLE_FUNCTS]{
       &_pkg_func->_pre_build, &_pkg_func->_build, &_pkg_func->_pos_build};
 
-  fecux::utils::string _build_file_locale;
-  fecux::utils::string _command;
+  exec_functions(_build_functions_name, _build_functions_ref,
+                 BUILD_POSSIBLE_FUNCTS, true, "compiling");
+}
 
-  _build_file_locale._cat_str(*_pkg_info->_pkg_root, "/", BUILDPKG_FILE);
+void fecux::main::package::exec_install_functions() {
+  const char *_install_functions_name[INSTALL_POSSIBLE_FUNCTS]{"pre_install",
+                                                               "install"
+                                                               "pos_install"};
 
-  for (int i = 0; i < BUILD_POSSIBLE_FUNCTS; i++) {
-    if (*_build_functions_ref[i] == 1) {
-      _command._cat_str("source ", *_build_file_locale, " && ",
-                        _build_functions_name[i]);
-      if (std::system(*_command) != 0) {
-        fecux::utils::string _what;
-        _what._cat_str("An error occurred in functions -> ", RED,
-                       _build_functions_name[i], NC, " file -> ", RED,
-                       *_build_file_locale, NC, ". Check it! :/");
-        throw fecux::tools::runtime::exception(_what, ERROR_FUNCTION_BUILD);
-      }
-      _command.clean();
-    }
-  }
+  const unsigned int *_install_functions_ref[INSTALL_POSSIBLE_FUNCTS]{
+      &_pkg_func->_pre_install, &_pkg_func->_install, &_pkg_func->_pos_install};
+
+  exec_functions(_install_functions_name, _install_functions_ref,
+                 INSTALL_POSSIBLE_FUNCTS);
 }
 
 /*

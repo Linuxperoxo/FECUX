@@ -60,7 +60,7 @@ DESTROYER
 
  */
 
-fecux::utils::string::~string() noexcept { clean(); }
+fecux::utils::string::~string() noexcept { std::free(_str); }
 
 /*
 

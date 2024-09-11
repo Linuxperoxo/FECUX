@@ -50,6 +50,7 @@ char **fecux::tools::runtime::integrity::read_file(const char **_names,
   _libconfig->readFile(_file);
 
   std::string _buffer;
+  size_t _str_size{0};
 
   for (size_t i = 0; i < _element_size; i++) {
     if (!_libconfig->lookupValue(_names[i], _buffer) || _buffer.empty()) {
@@ -66,9 +67,9 @@ char **fecux::tools::runtime::integrity::read_file(const char **_names,
       throw fecux::tools::runtime::exception(_what, FAILED_TO_LOAD_VAR);
     }
 
-    const size_t _str_size = std::strlen(_buffer.c_str());
+    _str_size = std::strlen(_buffer.c_str());
 
-    _src[i] = static_cast<char *>(std::malloc(_str_size));
+    _src[i] = static_cast<char *>(std::malloc(_str_size + 1));
 
     if (_src[i] == nullptr) {
       for (size_t k = 0; k < i; k++) {
@@ -80,7 +81,10 @@ char **fecux::tools::runtime::integrity::read_file(const char **_names,
       throw std::bad_alloc();
     }
     std::memcpy(_src[i], _buffer.c_str(), _str_size);
+    _src[i][_str_size] = '\0';
   }
+  expurg_obj(_libconfig);
+  std::free(_libconfig);
   return _src;
 }
 

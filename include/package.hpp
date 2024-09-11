@@ -64,7 +64,12 @@ private:
   void package_exist(const char *_pkg_name);
   void populate_info_struct();
   void load_functions();
+  void exec_functions(const char **_func_names, const unsigned **_func_ref,
+                      const int &_possible_func,
+                      const bool &_use_animation = false,
+                      const char *_animation_msg = "");
   void exec_build_functions();
+  void exec_install_functions();
 
 public:
   explicit package(const char *_pkg_name) noexcept;
