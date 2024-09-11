@@ -17,6 +17,7 @@
 #define FAILED_TO_LOAD_VAR 106
 #define NONE_FUNCTION_FOUND 107
 #define BUILDPKG_FILE_NOT_FOUND 108
+#define ERROR_FUNCTION_BUILD 109
 
 namespace fecux {
 namespace tools {
