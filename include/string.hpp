@@ -35,7 +35,7 @@ public:
 
   const char *operator*() const noexcept;
 
-  void clean() const noexcept;
+  void clean() noexcept;
 
   template <typename... Args> const char *_cat_str(Args... args) {
     const bool _is_nullptr = (_str == nullptr ? true : false);

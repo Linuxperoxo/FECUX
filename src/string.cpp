@@ -164,9 +164,11 @@ void fecux::utils::string::_mov_str(const char *_src_str,
   _str_size = _src_str_size;
 }
 
-inline void fecux::utils::string::clean() const noexcept {
+void fecux::utils::string::clean() noexcept {
   if (_str != nullptr) {
     std::free(_str);
+    _str = nullptr;
+    _mov_str("", 0);
   }
 }
 
