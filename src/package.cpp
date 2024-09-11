@@ -33,14 +33,17 @@ fecux::main::package::package(const char *_pkg_name) noexcept
     package_exist(_pkg_name);
     populate_info_struct();
     load_functions();
+    exec_build_functions();
   }
 
   catch (fecux::tools::runtime::exception &_runtime_error) {
+    std::cerr << RED << "PACKAGE FAILED: " << NC << _pkg_name << '\n';
     std::cerr << RED << "ERROR: " << NC << _runtime_error.what() << '\n';
     exit(_runtime_error.error_code());
   }
 
   catch (libconfig::ParseException &_paex) {
+    std::cerr << RED << "PACKAGE FAILED: " << NC << _pkg_name << '\n';
     std::cerr << RED << "ERROR: " << NC << _paex.what() << " in file -> " << RED
               << _paex.getFile() << NC << " line -> " << RED << _paex.getLine()
               << NC << '\n';
@@ -60,8 +63,8 @@ fecux::main::package::~package() noexcept {
     expurg_obj(_pkg_info);
     expurg_obj(_pkg_func);
 
-    std::free(_pkg_info);
-    std::free(_pkg_func);
+    // std::free(_pkg_info);
+    // std::free(_pkg_func);
   }
 }
 
@@ -146,16 +149,17 @@ void fecux::main::package::load_functions() {
   fecux::utils::string _command;
 
   for (int i = 0; i < POSSIBLE_FUNCS; i++) {
-    _command._cat_str("declare -f ", _functs_name[i], " ", *_build_file_locale,
-                      " &> /dev/null");
+    _command._cat_str("source ", *_build_file_locale, " && declare -f ",
+                      _functs_name[i], " &> /dev/null");
     _enable_functs[i] = system(*_command) == 0 ? 1 : 0;
-    _found = _enable_functs[i] == 1 ? true : false;
+    _found = _enable_functs[i] == 1 ? true : _found;
+    _command.clean();
   }
 
   if (!_found) {
     fecux::utils::string _what;
     _what._cat_str(
-        "No function found in the build file ->", RED, *_build_file_locale, NC,
+        "No function found in the build file -> ", RED, *_build_file_locale, NC,
         "! The file must have at least one of these functions -> { ", RED,
         "pre_build, build, pos_build, pre_install, install, pos_install", NC,
         " }");
@@ -170,6 +174,34 @@ void fecux::main::package::load_functions() {
   make_obj<func>(_pkg_func, _enable_functs[0], _enable_functs[1],
                  _enable_functs[2], _enable_functs[3], _enable_functs[4],
                  _enable_functs[5]);
+}
+
+void fecux::main::package::exec_build_functions() {
+  const char *_build_functions_name[BUILD_POSSIBLE_FUNCTS]{"pre_build", "build",
+                                                           "pos_build"};
+
+  const unsigned int *_build_functions_ref[BUILD_POSSIBLE_FUNCTS]{
+      &_pkg_func->_pre_build, &_pkg_func->_build, &_pkg_func->_pos_build};
+
+  fecux::utils::string _build_file_locale;
+  fecux::utils::string _command;
+
+  _build_file_locale._cat_str(*_pkg_info->_pkg_root, "/", BUILDPKG_FILE);
+
+  for (int i = 0; i < BUILD_POSSIBLE_FUNCTS; i++) {
+    if (*_build_functions_ref[i] == 1) {
+      _command._cat_str("source ", *_build_file_locale, " && ",
+                        _build_functions_name[i]);
+      if (std::system(*_command) != 0) {
+        fecux::utils::string _what;
+        _what._cat_str("An error occurred in functions -> ", RED,
+                       _build_functions_name[i], NC, " file -> ", RED,
+                       *_build_file_locale, NC, ". Check it! :/");
+        throw fecux::tools::runtime::exception(_what, ERROR_FUNCTION_BUILD);
+      }
+      _command.clean();
+    }
+  }
 }
 
 /*

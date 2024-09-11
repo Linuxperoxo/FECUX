@@ -10,7 +10,9 @@
 #include "string.hpp"
 
 #define INFO_NUM 4
-#define POSSIBLE_FUNCS 6
+#define BUILD_POSSIBLE_FUNCTS 3
+#define INSTALL_POSSIBLE_FUNCTS 3
+#define POSSIBLE_FUNCS BUILD_POSSIBLE_FUNCTS + INSTALL_POSSIBLE_FUNCTS
 
 namespace fecux {
 namespace main {
@@ -62,6 +64,7 @@ private:
   void package_exist(const char *_pkg_name);
   void populate_info_struct();
   void load_functions();
+  void exec_build_functions();
 
 public:
   explicit package(const char *_pkg_name) noexcept;
