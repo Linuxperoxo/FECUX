@@ -24,7 +24,7 @@ const char *fecux::utils::animation::_animation_frames[_ANIMATION_FRAMES]{
     "---------------------", "C-------------------H", " C-----------------H ",
     "  C---------------H  ", "   C-------------H   ", "    C-----------H    ",
     "     C---------H     ", "      C-------H      ", "       C-----H       ",
-    "        C---H        ", "        C + H <3     "};
+    "        C---H        ", "        C + H        "};
 
 /*
 
@@ -44,7 +44,7 @@ void fecux::utils::animation::run(std::atomic<bool> *_running,
       if (!_running->load()) {
         break;
       }
-      // std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FPS));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000 / FPS));
     }
   }
   std::cout << '\n';
