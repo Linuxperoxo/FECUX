@@ -13,7 +13,7 @@ int main(int argc, char **argv) {
 
   make_obj<fecux::main::config>(_config);
   fecux::tools::runtime::integrity::verify_dirs(_config);
-  make_obj<fecux::main::package>(_package, "neofetch");
+  make_obj<fecux::main::package>(_package, "neofetc");
 
   expurg_obj(_package);
   expurg_obj(_config);
