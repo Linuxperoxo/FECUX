@@ -9,7 +9,7 @@
 
 template <typename Class, typename... ArgsToConstruct>
 inline Class *make_obj(void *_addrs_to_construct,
-                       ArgsToConstruct... _construct_Args) noexcept {
+                       ArgsToConstruct &&..._construct_Args) noexcept {
   if (_addrs_to_construct != nullptr) {
     return new (_addrs_to_construct) Class(_construct_Args...);
   }
