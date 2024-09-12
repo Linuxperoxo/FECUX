@@ -7,6 +7,10 @@
 #ifndef __PACKAGE_HPP__
 #define __PACKAGE_HPP__
 
+#include <iostream>
+
+#include "color.hpp"
+#include "exception.hpp"
 #include "string.hpp"
 
 #define INFO_NUM 4
@@ -55,6 +59,19 @@ private:
           _pos_install(_pos_install) {}
 
     ~pkg_functions() noexcept = default;
+
+    inline void is_safe() {
+      if (_install == 0 && _build == 1) {
+        std::cout << YELLOW << "WARNING: " << NC
+                  << "The package has no function for installation. It will "
+                     "just compile\n";
+        return;
+      }
+
+      if (_install == 0 && _build == 0) {
+        throw fecux::tools::runtime::exception(NONE_MAIN_FUNCTIONS_FOUND);
+      }
+    }
   } func;
 
   info *_pkg_info;
