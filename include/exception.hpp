@@ -18,6 +18,7 @@
 #define NONE_FUNCTION_FOUND 107
 #define BUILDPKG_FILE_NOT_FOUND 108
 #define ERROR_FUNCTION_BUILD 109
+#define NONE_MAIN_FUNCTIONS_FOUND 110
 
 namespace fecux {
 namespace tools {

@@ -32,6 +32,16 @@ fecux::tools::runtime::exception::exception(
                    "custom repository you should use ",
                    GREEN, "fecux -s", NC, " to sync your local repository");
     break;
+
+  case PKG_NOT_FOUND:
+    _what._cat_str("Package not found in local repository");
+    break;
+
+  case NONE_MAIN_FUNCTIONS_FOUND:
+    _what._cat_str(
+        "The build file must have at least one of these functions -> [ ", RED,
+        "install, build", NC, " ]");
+    break;
   }
 }
 
