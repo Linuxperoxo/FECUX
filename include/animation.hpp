@@ -17,6 +17,14 @@ class animation {
 private:
   static const char *_animation_frames[_ANIMATION_FRAMES];
 
+  animation() = delete;
+  animation(const animation &) = delete;
+  animation(animation &&) = delete;
+  animation &operator=(const animation &) = delete;
+  animation &operator=(animation &&) = delete;
+
+  ~animation() = delete;
+
 public:
   static void run(std::atomic<bool> *_running,
                   const char *_loading_msg) noexcept;
