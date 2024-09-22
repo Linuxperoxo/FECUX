@@ -2,7 +2,8 @@
 
   COPYRIGHT: (c) 2024 per Linuxperoxo.
   AUTHOR: Linuxperoxo
-
+  FILE: make_obj.hpp
+  
 */
 
 #ifndef __MAKE_OBJ_HPP__
@@ -10,8 +11,8 @@
 
 #include <utility>
 
-namespace fecux {
-namespace memory {
+namespace fecux{
+namespace memory{
 
 /* <=========================================================================>
  */
@@ -35,8 +36,8 @@ namespace memory {
 /* <=======================================================================> */
 
 template <typename ClassType, typename... Args>
-inline void *make(void *_addrs_to_make, Args &&...args) noexcept {
-  if (_addrs_to_make != nullptr) {
+inline void *make(void *_addrs_to_make, Args &&...args) noexcept{
+  if(_addrs_to_make != nullptr){
     return new (_addrs_to_make) ClassType(std::forward<Args>(args)...);
   }
   return nullptr;
@@ -64,8 +65,8 @@ inline void *make(void *_addrs_to_make, Args &&...args) noexcept {
  */
 
 template <typename ClassType>
-inline int expurg(void *_addrs_to_expurg) noexcept {
-  if (_addrs_to_expurg != nullptr) {
+inline int expurg(void *_addrs_to_expurg) noexcept{
+  if(_addrs_to_expurg != nullptr){
     static_cast<ClassType *>(_addrs_to_expurg)->~ClassType();
     return 1;
   }

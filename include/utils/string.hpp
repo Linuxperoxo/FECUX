@@ -2,6 +2,7 @@
 
   COPYRIGHT: (c) 2024 per Linuxperoxo.
   AUTHOR: Linuxperoxo
+  FILE: string.hpp
 
 */
 
@@ -9,68 +10,75 @@
 #define __STRING_HPP__
 
 #include <cstddef>
-#include <cstdlib>
-#include <cstring>
 #include <new>
+#include <cstring>
+#include <cstdlib>
 
-namespace fecux {
-namespace utils {
+namespace fecux{
+namespace utils{
 
-class string {
+class string{
 private:
-  char *_begin_block{nullptr};
-  std::size_t _string_len{0};
+  char* _string;
+  std::size_t _string_len;
 
-  void cpy_string(const char *_string);
+  void cpy_string(const char* _src_str);
 
 public:
   string() noexcept;
-  string(const char *_string);
-  string(const string &_string_class);
-  string(string &&_string_class) noexcept;
+  string(const char* _src_str);
+  string(const string& _str_class);
+  string(string&& _str_class) noexcept;
 
-  string &operator=(const char *_string);
-  string &operator=(const string &_string_class);
-  string &operator=(string &&_string_class);
+  inline ~string() noexcept{
+    std::free(_string);
+  }
 
-  template <typename... Args> inline void cat_str(Args &&...args) {
-    const char *const _str_to_cat[]{args...};
-    std::size_t _str_len_each[]{std::strlen(args)...};
-    std::size_t _full_string_len{_string_len};
+  string& operator=(const char* _src_str);
+  string& operator=(const string& _str_class);
+  string& operator=(string&& _str_class) noexcept;
 
-    for (const auto &_str_len : _str_len_each) {
-      _full_string_len += _str_len;
+  template<typename... strings_to_cat>
+  const char* cat_str(strings_to_cat&&... _str_to_cat){
+    const char* _strs[]{_str_to_cat...};
+    std::size_t _strs_len[]{std::strlen(_str_to_cat)...};
+    std::size_t _full_len{_string_len};
+
+    for(std::size_t i = 0; i < sizeof(_strs_len) / sizeof(_strs_len[0]); i++){
+      _full_len += _strs_len[i];
     }
 
-    char *_buffer{static_cast<char *>(std::malloc(_full_string_len + 1))};
+    char* _buffer{
+      static_cast<char*>(std::malloc(_full_len + 1))
+    };
 
-    if (_buffer == nullptr) {
+    if(_buffer == nullptr){
       throw std::bad_alloc();
     }
 
-    size_t _coppied{0};
+    std::size_t _bytes_coppied{0};
 
-    if (_begin_block != nullptr || _string_len > 0) {
-      std::memcpy(_buffer, _begin_block, _string_len);
-      _coppied = _string_len;
+    if(_string != nullptr){
+      std::memcpy(_buffer, _string, _string_len);
+      _bytes_coppied += _string_len;
     }
 
-    for (std::size_t i = 0; i < sizeof(_str_to_cat) / sizeof(_str_to_cat[0]);
-         i++) {
-      std::memcpy(_buffer + _coppied, _str_to_cat[i], _str_len_each[i]);
-      _coppied += _str_len_each[i];
+    for(std::size_t i = 0; i < sizeof(_strs_len) / sizeof(_strs_len[0]); i++){
+      std::memcpy(_buffer + _bytes_coppied, _strs[i], _strs_len[i]);
+      _bytes_coppied += _strs_len[i];
     }
+    std::free(_string);
+    
+    _buffer[_full_len] = '\0';
+    
+    _string = _buffer;
+    _string_len = _full_len;
 
-    std::free(_begin_block);
-
-    _begin_block = _buffer;
-    _begin_block[_full_string_len] = '\0';
-
-    _string_len = _full_string_len;
+    return _string;
   }
 
-  inline const char *operator*() noexcept { return _begin_block; }
-  inline std::size_t str_len() noexcept { return _string_len; }
+  inline const char* operator*() const noexcept { return _string; }
+  inline std::size_t len() const noexcept { return _string_len; }
 };
 
 } // namespace utils
