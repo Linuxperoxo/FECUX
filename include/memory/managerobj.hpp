@@ -2,7 +2,7 @@
 
   AUTHOR: Linuxperoxo
   COPYRIGHT: (c) 2024 per Linuxperoxo.
-  FILE: managerobj.cpp
+  FILE: managerobj.hpp
 
 */
 
