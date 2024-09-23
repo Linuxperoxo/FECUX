@@ -1,19 +1,10 @@
 /*
 
-  AUTHOR: Linuxperoxo                    
   COPYRIGHT: (c) 2024 per Linuxperoxo.
+  AUTHOR: Linuxperoxo
   FILE: string.cpp
 
 */
-
-#include <cstdlib>
-#include <cstring>
-#include <new>
-
-#include "../include/utils/string.hpp"
-
-
-
 
 /*
  
@@ -25,6 +16,8 @@
 */
 
 
+
+#include "../include/utils/string.hpp"
 
 
 
@@ -39,9 +32,11 @@
 */
 
 
+
 fecux::utils::string::string() noexcept
-  : _string(nullptr), 
+  : _string(nullptr),
     _string_len(0){}
+
 
 
 /*
@@ -57,11 +52,14 @@ fecux::utils::string::string() noexcept
 */
 
 
-fecux::utils::string::string(const char* _src_str)
+
+fecux::utils::string::string(const char* _src)
   : _string(nullptr),
-    _string_len(std::strlen(_src_str)){
-    cpy_string(_src_str);
+    _string_len(0){
+    cpy_str(_src, std::strlen(_src));
   }
+
+
 
 /*
  
@@ -78,13 +76,16 @@ fecux::utils::string::string(const char* _src_str)
       OUT: Linuxperoxo|Linuxperoxo
  
 */
-  
 
-fecux::utils::string::string(const fecux::utils::string& _str_class)
-  :  _string(nullptr),
-    _string_len(_str_class._string_len){
-    cpy_string(_str_class._string);
-}
+
+
+fecux::utils::string::string(const string& _src)
+  : _string(nullptr),
+    _string_len(0){
+    cpy_str(_src._string, _src._string_len); 
+  }
+
+
 
 /*
  
@@ -111,7 +112,7 @@ fecux::utils::string::string(const fecux::utils::string& _str_class)
   EX: int* _n1 = new int(); // Digamos que _n1 aponta para o endereço 0xFFFFFFFF
       *_n1 = 10;
 
-      int* _n2 = _n1; // Não estamos pegando o conteúdo de _n1 mas sim o local apontando por ele
+      int* _n2 = _n1; // Não estamos pegando o conteúdo de _n1 mas sim o local apontando por ele, ou seja, o endereço 0xFFFFFFFF
       
       *_n2 = 20; // Aqui tanto o conteúdo de _n1 
        2 = 20; // quando o de _n2 são modificados, 
@@ -124,12 +125,16 @@ fecux::utils::string::string(const fecux::utils::string& _str_class)
 
 */
 
-fecux::utils::string::string(fecux::utils::string&& _str_class) noexcept
-  : _string(_str_class._string),
-    _string_len(_str_class._string_len){
-    _str_class._string = nullptr;
-    _str_class._string_len = 0;
+
+
+fecux::utils::string::string(string&& _class_to_move) noexcept
+  : _string(_class_to_move._string),
+    _string_len(_class_to_move._string_len){
+    _class_to_move._string = nullptr;
+    _class_to_move._string_len = 0;
   }
+
+
 
 /*
 
@@ -150,56 +155,56 @@ fecux::utils::string::string(fecux::utils::string&& _str_class) noexcept
 */
 
 
-fecux::utils::string& fecux::utils::string::operator=(const char* _src_str){
-  _string_len = std::strlen(_src_str);
-  cpy_string(_src_str);
 
+fecux::utils::string& fecux::utils::string::operator=(const char* _src){
+  cpy_str(_src, std::strlen(_src));
   return *this;
 }
 
-fecux::utils::string& fecux::utils::string::operator=(const fecux::utils::string& _str_class){
-  if(this != &_str_class){
-    _string_len = _str_class._string_len;
-    cpy_string(_str_class._string);
+fecux::utils::string& fecux::utils::string::operator=(const string& _src){
+  if(this != &_src){
+    cpy_str(_src._string, _src._string_len);
   }
   return *this;
 }
 
-fecux::utils::string& fecux::utils::string::operator=(string&& _str_class) noexcept{
-  if(this != &_str_class){
-    _string_len = _str_class._string_len;
-    _string = _str_class._string;
+fecux::utils::string& fecux::utils::string::operator=(string&& _class_to_move) noexcept{
+  if(this != &_class_to_move){
+    _string = _class_to_move._string;
+    _string_len = _class_to_move._string_len;
 
-    _str_class._string_len = 0;
-    _str_class._string = nullptr;
+    _class_to_move._string = nullptr;
+    _class_to_move._string_len = 0;
   }
   return *this;
 }
+
+
 
 /*
  
-  Função simples que aloca um buffer para a string passada,
+  Função main dessa lib. Ela aloca um buffer para a string passada,
   fazemos a cópia do conteúdo de _src_str para o _buffer,
   logo depois mandamos o local apontado por _buffer para _string(Membro da classe)
  
 */
 
 
-void fecux::utils::string::cpy_string(const char* _src_str){
+
+void fecux::utils::string::cpy_str(const char* _src, const std::size_t _src_len){ 
   char* _buffer{
-    static_cast<char*>(std::malloc(_string_len + 1))
+    static_cast<char*>(std::malloc( _src_len + 1))
   };
 
   if(_buffer == nullptr){
     throw std::bad_alloc();
   }
+  std::memcpy(_buffer, _src, _src_len);
+  _buffer[_src_len] = '\0';
+  
+  std::free(_string);
 
-  std::memcpy(_buffer, _src_str, _string_len);
-  _buffer[_string_len] = '\0';
-
-  if(_string != nullptr){
-    std::free(_string);
-  }
   _string = _buffer;
+  _string_len = _src_len;
 }
 
