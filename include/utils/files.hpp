@@ -9,6 +9,8 @@
 #ifndef __FILES_UTILS_HPP__
 #define __FILES_UTILS_HPP__
 
+#include <filesystem>
+
 namespace fecux{
 namespace utils{
 
@@ -23,13 +25,27 @@ private:
   ~files() = delete;
 
 public:
-  static bool is_file(const char *_file) noexcept;
-  static bool is_dir(const char *_dir) noexcept;
-  static bool is_empty(const char *_dir) noexcept;
-  static void create_dirs(const char *_dir) noexcept;
+  inline static bool is_file(const char *_file) noexcept{
+    return std::filesystem::exists(_file) && std::filesystem::is_regular_file(_file);
+  }
+
+  inline static bool is_dir(const char *_dir) noexcept{
+    return std::filesystem::exists(_dir) && std::filesystem::is_directory(_dir);
+  }
+
+  inline static bool is_empty(const char *_dir) noexcept{
+    return std::filesystem::exists(_dir) && std::filesystem::is_empty(_dir);
+  }
+
+  inline static void create_dirs(const char *_dir) noexcept{
+    if(!fecux::utils::files::is_dir(_dir)){
+      std::filesystem::create_directories(_dir);
+    }
+  }
 };
 
 } // namespace tools
 } // namespace fecux
 
 #endif
+
