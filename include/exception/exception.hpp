@@ -20,7 +20,7 @@ private:
   uint8_t _error_code;
 
   exception() = delete;
-public:
+public:  
   explicit exception(const uint8_t _error_code) noexcept;
   explicit exception(const exception&) noexcept;
   explicit exception(exception&&) noexcept;
