@@ -21,7 +21,6 @@
 
 
 
-
 /*
 
   Construtor de inicialização simples, ou seja, declarando a "variável"
