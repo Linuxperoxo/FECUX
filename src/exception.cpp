@@ -2,15 +2,17 @@
 
   COPYRIGHT: (c) 2024 per Linuxperoxo.
   AUTHOR: Linuxperoxo
-  FILE: exception.cpp
+  FILE: exception.hpp
 
 */
 
 #include <utility>
 
-#include "../include/fecux/exception.hpp"
+#include "../include/exception/exception.hpp"
+#include "../include/globals.hpp"
 #include "../include/color.hpp"
-#include "../include/env.hpp"
+
+
 
 /* 
  
@@ -30,31 +32,33 @@
 */
 
 
+
 /*
 
-  Essa primeira classe é o construtor genérico, ou seja, apenas colocando o código
-  de error ele já faz a manipulação do erro se ele existir
+  Essa primeira classe é o construtor genérico, ou seja, apenas colocando o número
+  do error ele já faz a configuração da class, isso se o erro existir
 
 */
 
 
-fecux::main::exception::exception(const uint16_t _error_code) noexcept
+
+fecux::exception::exception(const uint8_t _error_code) noexcept
   : _what(),
     _error_code(_error_code){
     switch(_error_code){
       case CONFIG_FILE_NOT_FOUND:
-          _what.cat_str("Config file not found in -> ", RED, CONFIG_FILE_LOCALE, NC);
+        _what.cat_str("Config file -> ", RED, CONFIG_FILE_LOCALE, NC, " not found!!! >:(");
         break;
-        
       case REPO_DIR_IS_EMPTY:
-        _what.cat_str("Repo directory is empty, use -> ", RED, "fecux -s ", NC, " to sync local repo");
+       _what.cat_str("Repo directory is empty, use -> ", RED, "fecux -s ", NC, " to sync local repo"); 
         break;
-
-      case PKG_NOT_FOUND:
+      case PACKAGE_NOT_FOUND:
         _what.cat_str("Package not found in local repo");
         break;
-    }  
   }
+}
+
+
 
 /*
  
@@ -63,29 +67,27 @@ fecux::main::exception::exception(const uint16_t _error_code) noexcept
 
 */
 
-fecux::main::exception::exception(fecux::utils::string& _what, const uint16_t _error_code) noexcept
-  : _what(_what),
-    _error_code(_error_code){}
+
+
+fecux::exception::exception(const exception& _other_exception) noexcept
+  : _what(_other_exception._what),
+    _error_code(_other_exception._error_code){}
+
+
 
 /*
  
   Esse aqui é um construtor de cópia, ele simplesmente pega uma instancia dessa 
   class e copia a mesma, util em casos de fazer uma cadeia de try catch, ou seja, 
-  lançar outra exception dentro de um catch
+  lançar a mesma exception dentro de um catch
 
 */
 
-fecux::main::exception::exception(fecux::main::exception&& _exception_class) noexcept
-  : _what(std::move(_exception_class._what)),
-    _error_code(_exception_class._error_code){
-    _exception_class._error_code = 0;
+
+
+fecux::exception::exception(exception&& _other_exception) noexcept
+  : _what(std::move(_other_exception._what)),
+    _error_code(_other_exception._error_code){
+    _other_exception._error_code = NO_EXCEPTION;
+    _other_exception._what = "non-exception";
   }
-
-/*
- 
-  Aqui são os get 
-
-*/
-
-const char* fecux::main::exception::what() noexcept { return *_what; }
-uint16_t fecux::main::exception::error_code() const noexcept { return _error_code; }
