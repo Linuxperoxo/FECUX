@@ -71,7 +71,7 @@ inline ObjType* make_obj(void* _addrs_to_make, Args_to_constructor&&... _args_to
 
 /*
 
-  Já nessa função é a chamada explícita do destrutor do objeto
+  Já essa função é a chamada explícita do destrutor do objeto
 
 */
 
