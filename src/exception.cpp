@@ -2,7 +2,7 @@
 
   COPYRIGHT: (c) 2024 per Linuxperoxo.
   AUTHOR: Linuxperoxo
-  FILE: exception.hpp
+  FILE: exception.cpp
 
 */
 
