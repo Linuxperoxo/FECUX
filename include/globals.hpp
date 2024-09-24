@@ -11,7 +11,7 @@
 
 /*
 
-  @info: Esse arquivo guarda variáveis gerais para o funcionamento
+  Esse arquivo guarda variáveis gerais para o funcionamento
   do fecux. Você pode alterar se quiser, mas o funcionamento não
   é garantido, teste e veja o resultado você mesmo =)
 
