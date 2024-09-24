@@ -6,7 +6,13 @@
 
 */
 
+#ifndef __MANAGEROBJ_HPP__
+#define __MANAGEROBJ_HPP__
 
+#include <utility>
+
+namespace fecux{
+namespace memory{
 
 /*
 
@@ -27,15 +33,6 @@
   Pronto, construtor chamado. O new retorna um ponteiro para o objeto construído
 
 */
-
-
-
-#include <utility>
-
-
-
-namespace fecux{
-namespace memory{
 
 
 
@@ -88,3 +85,5 @@ inline int expurg_obj(void* _addrs_to_expurg) noexcept{
 
 } // namespace memory
 } // namespace fecux
+
+#endif
