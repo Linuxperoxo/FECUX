@@ -54,6 +54,8 @@ public:
 
   */
 
+
+
   template <typename ... strs>
   inline const char* cat_str(strs&&... _strs){
     const char* _strs_array[]{_strs...};
@@ -108,6 +110,7 @@ public:
 
   inline uint16_t len() const noexcept { return _string_len; }
   
+
 
   /*
   

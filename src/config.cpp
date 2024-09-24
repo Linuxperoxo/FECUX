@@ -6,25 +6,30 @@
 
 */
 
-#include <libconfig.h++>
+#include <cstdint>
 
 #include "../include/fecux/config.hpp"
 
-void fecux::main::config::load_config(const char** _opts_value, std::atomic<bool>& _loadded, std::condition_variable& _cond) noexcept{
+void fecux::config::load_config(char** _opts_value, std::atomic<bool>& _dir_is_loadded, std::condition_variable& _cond_to_thread) noexcept{
   
+
+
   /*
   
     Array para alterar os membros da struct
 
   */
 
+
+
   fecux::utils::string* _opts_ref[OPTIONS_NUM]{
-    &fecux::main::options::_source_dir,
-    &fecux::main::options::_fakeroot_dir,
-    &fecux::main::options::_cflags,
-    &fecux::main::options::_cxxflags,
-    &fecux::main::options::_jobs
+    &opts::_source_dir,
+    &opts::_fakeroot_dir,
+    &opts::_cflags,
+    &opts::_cxxflags,
+    &opts::_jobs
   };
+
 
 
   /*
@@ -34,19 +39,37 @@ void fecux::main::config::load_config(const char** _opts_value, std::atomic<bool
 
   */
 
-  for(int i{0}; i < OPTIONS_NUM; i++){
+
+
+  for(uint8_t i{0}; i < OPTIONS_NUM; i++){
     *_opts_ref[i] = _opts_value[i];
-    if(i == 1){
-      _loadded.store(true);
-      _cond.notify_one();
+    if(i == 2){
+      _dir_is_loadded.store(true);
+      _cond_to_thread.notify_one();
     }
 
-    /* Liberando memória que não vai ser mais ultilizada */
 
-    std::free(const_cast<char*>(_opts_value[i]));
+
+    /* 
+    
+      Liberando memória que não vai ser mais ultilizada 
+    
+    */
+
+
+
+    std::free(_opts_value[i]);
   }
+
+
+
+  /* 
+    
+    Liberando o resto da memória 
   
-  /* Liberando o resto da memória */
-  
+  */
+
+
+
   std::free(_opts_value);
 }

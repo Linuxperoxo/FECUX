@@ -25,6 +25,17 @@ private:
   ~files() = delete;
 
 public:
+
+
+
+  /*
+
+    Essas funções são apenas para compactar a chamada de outras funções
+
+  */
+
+
+
   inline static bool is_file(const char *_file) noexcept{
     return std::filesystem::exists(_file) && std::filesystem::is_regular_file(_file);
   }
