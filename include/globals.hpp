@@ -24,13 +24,17 @@
 
 CONFIG_FILE_LOCALE:
 
-  * Variável para o arquivo de configuraç~ao do fecux
+  * Variável para o arquivo de configuração do fecux
 
   * Ela pode ser modificada sem preocupações
 
 */
 
+
+
 constexpr const char* CONFIG_FILE_LOCALE{"/etc/fecux.conf"};
+
+
 
 /*
 
@@ -38,13 +42,16 @@ constexpr const char* CONFIG_FILE_LOCALE{"/etc/fecux.conf"};
     
     * Variável para o diretório do repositório do gerenciador
     
-    * Não recomendo a modificação de tal, pode ser problemático 
+    * Não recomendo a modificação, pode ser problemático 
     já que não houve nenhum teste
 
 */
 
 
+
 constexpr const char* REPO_DIR{"/var/db/fecux/repo/"};
+
+
 
 /*
 
@@ -59,6 +66,7 @@ constexpr const char* REPO_DIR{"/var/db/fecux/repo/"};
     INSTALADOS FIQUEM OBSOLETOS NO SISTEMA
 
 */
+
 
 
 constexpr const char* WORLD_DIR{"/var/db/fecux/world/"};
